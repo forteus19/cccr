@@ -1,13 +1,18 @@
 package dev.vuis.cccr.mod.item;
 
+import java.util.Objects;
+import java.util.function.Supplier;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
@@ -16,13 +21,32 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.NonNull;
 
-import dev.vuis.cccr.mod.registry.CCSoundEvents;
+import dev.vuis.cccr.mod.data.Ammo;
+import dev.vuis.cccr.mod.registry.CCDataComponents;
 import dev.vuis.cccr.mod.server.bullet.BulletHitResult;
 import dev.vuis.cccr.mod.server.bullet.ServerBulletUtil;
 
 public class GunItem extends Item {
-	public GunItem(Properties properties) {
-		super(properties);
+	private final int damage;
+	private final @NonNull Ammo maxAmmo;
+	private final @NonNull Supplier<SoundEvent> soundShoot;
+	private final @NonNull Supplier<SoundEvent> soundReload;
+
+	public GunItem(Properties properties, Settings gunSettings) {
+		super(gunSettings.setComponentDefaults(properties));
+
+		this.damage = gunSettings.damage;
+        this.maxAmmo = Objects.requireNonNull(gunSettings.maxAmmo);
+		this.soundShoot = Objects.requireNonNull(gunSettings.soundShoot, "soundShoot");
+		this.soundReload = Objects.requireNonNull(gunSettings.soundReload, "soundReload");
+    }
+
+	public static Ammo getAmmo(ItemStack stack) {
+		return stack.getOrDefault(CCDataComponents.AMMO, Ammo.EMPTY);
+	}
+
+	public static void setAmmo(ItemStack stack, Ammo ammo) {
+		stack.set(CCDataComponents.AMMO, ammo);
 	}
 
 	@Override
@@ -31,11 +55,19 @@ public class GunItem extends Item {
 			return InteractionResult.PASS;
 		}
 
+		ItemStack stack = player.getItemInHand(hand);
+
+		Ammo ammo = getAmmo(stack);
+		if (ammo.loaded() == 0) {
+			return InteractionResult.CONSUME;
+		}
+		setAmmo(stack, ammo.withLoaded(ammo.loaded() - 1));
+
 		serverLevel.playSound(
 			null, player,
-			CCSoundEvents.ITEM_GUN_DESERT_EAGLE_SHOOT,
+			soundShoot.get(),
 			SoundSource.PLAYERS,
-			1f, 1f
+			2f, 1f
 		);
 
 		Vec3 start = player.getEyePosition();
@@ -67,10 +99,65 @@ public class GunItem extends Item {
 			}
 		}
 
-		if (hitResult.entity() != null) {
-			hitResult.entity().getEntity().hurtServer(serverLevel, serverLevel.damageSources().playerAttack(player), 10);
+		if (hitResult.entity() != null && hitResult.entity().getEntity() instanceof LivingEntity entity) {
+			entity.hurtTime = 0;
+			entity.invulnerableTime = 0;
+			if (entity.hurtServer(serverLevel, serverLevel.damageSources().playerAttack(player), damage)) {
+				entity.setDeltaMovement(0.0, 0.0, 0.0);
+			}
 		}
 
 		return InteractionResult.CONSUME;
+	}
+
+	public void reload(@NonNull Level level, @NonNull Player player, @NonNull ItemStack stack) {
+		Ammo ammo = getAmmo(stack);
+		if (ammo.loaded() >= maxAmmo.loaded() || ammo.reserve() == 0) {
+			return;
+		}
+
+		int usedAmmo = maxAmmo.loaded() - ammo.loaded();
+		setAmmo(stack, new Ammo(
+			Math.min(ammo.loaded() + ammo.reserve(), maxAmmo.loaded()),
+			Math.max(ammo.reserve() - usedAmmo, 0)
+		));
+
+		level.playSound(
+			null, player,
+			soundReload.get(),
+			SoundSource.PLAYERS,
+			1f, 1f
+		);
+	}
+
+	public static final class Settings {
+		private int damage = 5;
+		private Ammo maxAmmo = null;
+		private Supplier<SoundEvent> soundShoot = null;
+		private Supplier<SoundEvent> soundReload = null;
+
+		public Settings damage(int damage) {
+			this.damage = damage;
+			return this;
+		}
+
+		public Settings maxAmmo(Ammo maxAmmo) {
+			this.maxAmmo = maxAmmo;
+			return this;
+		}
+
+		public Settings soundShoot(Supplier<SoundEvent> soundShoot) {
+			this.soundShoot = soundShoot;
+			return this;
+		}
+
+		public Settings soundReload(Supplier<SoundEvent> soundReload) {
+			this.soundReload = soundReload;
+			return this;
+		}
+
+		public Item.Properties setComponentDefaults(Item.Properties properties) {
+			return properties.component(CCDataComponents.AMMO, maxAmmo);
+		}
 	}
 }

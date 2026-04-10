@@ -8,7 +8,7 @@ import org.jspecify.annotations.NonNull;
 
 import dev.vuis.cccr.mod.CounterCraft;
 import dev.vuis.cccr.mod.client.registry.CCKeyMappings;
-import dev.vuis.cccr.mod.registry.CCCreativeTabs;
+import dev.vuis.cccr.mod.registry.CCCreativeModeTabs;
 import dev.vuis.cccr.mod.registry.CCItems;
 
 public final class CCEnglishLangProvider extends FabricLanguageProvider {
@@ -18,7 +18,7 @@ public final class CCEnglishLangProvider extends FabricLanguageProvider {
 
     @Override
     public void generateTranslations(HolderLookup.@NonNull Provider registryLookup, @NonNull TranslationBuilder builder) {
-        builder.add(CCCreativeTabs.KEY_GUNS, "CounterCraft Guns");
+        builder.add(CCCreativeModeTabs.KEY_GUNS, "CounterCraft Guns");
 
         builder.add(CCItems.DESERT_EAGLE, "Desert Eagle");
 

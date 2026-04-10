@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 
-public final class CCCreativeTabs {
+public final class CCCreativeModeTabs {
     public static final ResourceKey<CreativeModeTab> KEY_GUNS = createKey("guns");
     public static final CreativeModeTab TAB_GUNS = register(KEY_GUNS, FabricCreativeModeTab.builder()
         .icon(() -> new ItemStack(CCItems.DESERT_EAGLE))
@@ -20,7 +20,7 @@ public final class CCCreativeTabs {
         .build()
     );
 
-    private CCCreativeTabs() {
+    private CCCreativeModeTabs() {
     }
 
     private static ResourceKey<CreativeModeTab> createKey(String id) {

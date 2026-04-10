@@ -11,6 +11,8 @@ import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
@@ -36,8 +38,23 @@ public final class ServerBulletUtil {
     }
 
     private static BlockHitResult clipTraversedBlockPos(BlockGetter levelView, ClipContext clipContext, BlockPos pos) {
-        return levelView.getBlockState(pos)
-            .getCollisionShape(levelView, pos)
+        BlockState blockState = levelView.getBlockState(pos);
+        if (blockState.isAir()) {
+            return null;
+        }
+
+        BlockHitResult blockHit = clipContext.getBlockShape(blockState, levelView, pos)
+            .clip(clipContext.getFrom(), clipContext.getTo(), pos);
+        if (blockHit != null) {
+            return blockHit;
+        }
+
+
+        FluidState fluidState = levelView.getFluidState(pos);
+        if (fluidState.isEmpty()) {
+            return null;
+        }
+        return clipContext.getFluidShape(fluidState, levelView, pos)
             .clip(clipContext.getFrom(), clipContext.getTo(), pos);
     }
 

@@ -1,12 +1,15 @@
 package dev.vuis.cccr.mod.client.event;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.client.resources.sounds.EntityBoundSoundInstance;
-import net.minecraft.network.chat.Component;
-import net.minecraft.sounds.SoundSource;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
 
 import dev.vuis.cccr.mod.client.registry.CCKeyMappings;
-import dev.vuis.cccr.mod.registry.CCSoundEvents;
+import dev.vuis.cccr.mod.item.GunItem;
+import dev.vuis.cccr.mod.net.packet.ServerboundGunReloadPacket;
 
 public final class CCClientEvents {
     private CCClientEvents() {
@@ -14,21 +17,23 @@ public final class CCClientEvents {
     }
 
     public static void register() {
-        ClientTickEvents.END_CLIENT_TICK.register(client -> {
-            while (CCKeyMappings.RELOAD.consumeClick()) {
-                if (client.player == null) {
-                    return;
-                }
+        ClientTickEvents.END_CLIENT_TICK.register(CCClientEvents::onEndClientTick);
+    }
 
-                client.player.sendSystemMessage(Component.literal("Reloading..."));
-                client.getSoundManager().play(new EntityBoundSoundInstance(
-                    CCSoundEvents.ITEM_GUN_DESERT_EAGLE_RELOAD,
-                    SoundSource.PLAYERS,
-                    1f, 1f,
-                    client.player,
-                    0L
-                ));
+    private static void onEndClientTick(Minecraft minecraft) {
+        LocalPlayer player = minecraft.player;
+        if (player == null) {
+            return;
+        }
+
+        while (CCKeyMappings.RELOAD.consumeClick()) {
+            ItemStack heldStack = player.getItemInHand(InteractionHand.MAIN_HAND);
+
+            if (!(heldStack.getItem() instanceof GunItem)) {
+                break;
             }
-        });
+
+            ClientPlayNetworking.send(ServerboundGunReloadPacket.INSTANCE);
+        }
     }
 }
