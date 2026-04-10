@@ -16,6 +16,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.NonNull;
 
+import dev.vuis.cccr.mod.registry.CCSoundEvents;
 import dev.vuis.cccr.mod.server.bullet.BulletHitResult;
 import dev.vuis.cccr.mod.server.bullet.ServerBulletUtil;
 
@@ -29,6 +30,13 @@ public class GunItem extends Item {
 		if (!(level instanceof ServerLevel serverLevel)) {
 			return InteractionResult.PASS;
 		}
+
+		serverLevel.playSound(
+			null, player,
+			CCSoundEvents.ITEM_GUN_DESERT_EAGLE_SHOOT,
+			SoundSource.PLAYERS,
+			1f, 1f
+		);
 
 		Vec3 start = player.getEyePosition();
 		Vec3 end = start.add(player.getViewVector(1f).scale(64));
@@ -52,7 +60,7 @@ public class GunItem extends Item {
 				serverLevel.sendParticles(
 					new BlockParticleOption(ParticleTypes.BLOCK, hitState),
 					location.x, location.y, location.z,
-					3,
+					5,
 					0.0, 0.0, 0.0,
 					1.0
 				);
@@ -60,7 +68,7 @@ public class GunItem extends Item {
 		}
 
 		if (hitResult.entity() != null) {
-			hitResult.entity().getEntity().hurtServer(serverLevel, serverLevel.damageSources().playerAttack(player), 2);
+			hitResult.entity().getEntity().hurtServer(serverLevel, serverLevel.damageSources().playerAttack(player), 10);
 		}
 
 		return InteractionResult.CONSUME;

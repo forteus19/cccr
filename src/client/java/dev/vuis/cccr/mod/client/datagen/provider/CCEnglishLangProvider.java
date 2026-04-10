@@ -6,6 +6,8 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 import net.minecraft.core.HolderLookup;
 import org.jspecify.annotations.NonNull;
 
+import dev.vuis.cccr.mod.CounterCraft;
+import dev.vuis.cccr.mod.client.registry.CCKeyMappings;
 import dev.vuis.cccr.mod.registry.CCCreativeTabs;
 import dev.vuis.cccr.mod.registry.CCItems;
 
@@ -19,5 +21,8 @@ public final class CCEnglishLangProvider extends FabricLanguageProvider {
         builder.add(CCCreativeTabs.KEY_GUNS, "CounterCraft Guns");
 
         builder.add(CCItems.DESERT_EAGLE, "Desert Eagle");
+
+        builder.add("key.category.cccr.cccr", CounterCraft.DISPLAY_NAME);
+        builder.add(CCKeyMappings.RELOAD.getName(), "Reload");
     }
 }

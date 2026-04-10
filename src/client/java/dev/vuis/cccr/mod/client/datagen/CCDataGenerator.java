@@ -6,6 +6,7 @@ import org.jspecify.annotations.NonNull;
 
 import dev.vuis.cccr.mod.client.datagen.provider.CCEnglishLangProvider;
 import dev.vuis.cccr.mod.client.datagen.provider.CCModelProvider;
+import dev.vuis.cccr.mod.client.datagen.provider.CCSoundsProvider;
 
 public class CCDataGenerator implements DataGeneratorEntrypoint {
 	@Override
@@ -14,5 +15,6 @@ public class CCDataGenerator implements DataGeneratorEntrypoint {
 
 		pack.addProvider(CCEnglishLangProvider::new);
 		pack.addProvider(CCModelProvider::new);
+		pack.addProvider(CCSoundsProvider::new);
 	}
 }

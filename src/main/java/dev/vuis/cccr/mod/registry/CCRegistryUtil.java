@@ -1,7 +1,6 @@
 package dev.vuis.cccr.mod.registry;
 
 import net.minecraft.core.Registry;
-import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 
 import dev.vuis.cccr.mod.CounterCraft;
@@ -12,6 +11,6 @@ final class CCRegistryUtil {
     }
 
     static <T> ResourceKey<T> createKey(ResourceKey<? extends Registry<T>> registryKey, String path) {
-        return ResourceKey.create(registryKey, Identifier.fromNamespaceAndPath(CounterCraft.MOD_ID, path));
+        return ResourceKey.create(registryKey, CounterCraft.id(path));
     }
 }

@@ -1,4 +1,6 @@
 {
   "item.cccr.desert_eagle": "Desert Eagle",
-  "itemGroup.cccr.guns": "CounterCraft Guns"
+  "itemGroup.cccr.guns": "CounterCraft Guns",
+  "key.category.cccr.cccr": "CounterCraft: Condition Revived",
+  "key.cccr.reload": "Reload"
 }

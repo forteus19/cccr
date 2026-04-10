@@ -1,0 +1,12 @@
+{
+  "item.gun.desert_eagle.reload": {
+    "sounds": [
+      "cccr:item/gun/desert_eagle/reload"
+    ]
+  },
+  "item.gun.desert_eagle.shoot": {
+    "sounds": [
+      "cccr:item/gun/desert_eagle/shoot"
+    ]
+  }
+}

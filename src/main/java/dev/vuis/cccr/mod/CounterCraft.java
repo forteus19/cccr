@@ -1,11 +1,13 @@
 package dev.vuis.cccr.mod;
 
 import net.fabricmc.api.ModInitializer;
+import net.minecraft.resources.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dev.vuis.cccr.mod.registry.CCCreativeTabs;
 import dev.vuis.cccr.mod.registry.CCItems;
+import dev.vuis.cccr.mod.registry.CCSoundEvents;
 
 public final class CounterCraft implements ModInitializer {
 	public static final String MOD_ID = "cccr";
@@ -21,5 +23,11 @@ public final class CounterCraft implements ModInitializer {
 		CCCreativeTabs.init();
 		LOGGER.info("Registering items");
 		CCItems.init();
+		LOGGER.info("Registering sound events");
+		CCSoundEvents.init();
+	}
+
+	public static Identifier id(String path) {
+		return Identifier.fromNamespaceAndPath(CounterCraft.MOD_ID, path);
 	}
 }
