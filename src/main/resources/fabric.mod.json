@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "id": "cccr",
+  "version": "${version}",
+  "name": "CounterCraft: Condition Revived",
+  "description": "countercraft but new",
+  "icon": "assets/cccr/icon.png",
+  "authors": [
+    "_vuis",
+    "Thlrd_"
+  ],
+  "contributors": [
+  ],
+  "contact": {
+    "homepage": "https://discord.gg/4Z6W9QV2Sp"
+  },
+  "license": "GPL-3.0-only",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "dev.vuis.cccr.mod.CounterCraft"
+    ],
+    "client": [
+      "dev.vuis.cccr.mod.client.CounterCraftClient"
+    ],
+    "fabric-datagen": [
+      "dev.vuis.cccr.mod.client.datagen.CCDataGenerator"
+    ]
+  },
+  "mixins": [
+    "cccr.mixins.json",
+    {
+      "config": "cccr.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=0.18.6",
+    "minecraft": "~26.1.1",
+    "java": ">=25",
+    "fabric-api": "*"
+  }
+}
