@@ -8,5 +8,10 @@
     "sounds": [
       "cccr:item/gun/desert_eagle/shoot"
     ]
+  },
+  "item.gun.empty": {
+    "sounds": [
+      "cccr:item/gun/empty"
+    ]
   }
 }

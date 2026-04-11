@@ -1,15 +1,14 @@
 package dev.vuis.cccr.mod.client.event;
 
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 
-import dev.vuis.cccr.mod.client.registry.CCKeyMappings;
+import dev.vuis.cccr.mod.client.item.GunItemClient;
 import dev.vuis.cccr.mod.item.GunItem;
-import dev.vuis.cccr.mod.net.packet.ServerboundGunReloadPacket;
 
 public final class CCClientEvents {
     private CCClientEvents() {
@@ -21,19 +20,15 @@ public final class CCClientEvents {
     }
 
     private static void onEndClientTick(Minecraft minecraft) {
+        ClientLevel level = minecraft.level;
         LocalPlayer player = minecraft.player;
-        if (player == null) {
+        if (level == null || player == null) {
             return;
         }
 
-        while (CCKeyMappings.RELOAD.consumeClick()) {
-            ItemStack heldStack = player.getItemInHand(InteractionHand.MAIN_HAND);
-
-            if (!(heldStack.getItem() instanceof GunItem)) {
-                break;
-            }
-
-            ClientPlayNetworking.send(ServerboundGunReloadPacket.INSTANCE);
+        ItemStack heldStack = player.getItemInHand(InteractionHand.MAIN_HAND);
+        if (heldStack.getItem() instanceof GunItem gunItem) {
+            GunItemClient.tick(minecraft, gunItem, heldStack, level, player);
         }
     }
 }

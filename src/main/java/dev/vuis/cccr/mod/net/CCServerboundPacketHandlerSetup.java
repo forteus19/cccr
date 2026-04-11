@@ -3,6 +3,7 @@ package dev.vuis.cccr.mod.net;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 
 import dev.vuis.cccr.mod.net.packet.ServerboundGunReloadPacket;
+import dev.vuis.cccr.mod.net.packet.ServerboundGunShootPacket;
 
 public final class CCServerboundPacketHandlerSetup {
     private CCServerboundPacketHandlerSetup() {
@@ -11,5 +12,6 @@ public final class CCServerboundPacketHandlerSetup {
 
     public static void register() {
         ServerPlayNetworking.registerGlobalReceiver(ServerboundGunReloadPacket.TYPE, ServerboundGunReloadPacket::handle);
+        ServerPlayNetworking.registerGlobalReceiver(ServerboundGunShootPacket.TYPE, ServerboundGunShootPacket::handle);
     }
 }

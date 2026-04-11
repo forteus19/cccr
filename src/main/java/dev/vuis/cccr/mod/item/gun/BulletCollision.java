@@ -1,4 +1,4 @@
-package dev.vuis.cccr.mod.server.bullet;
+package dev.vuis.cccr.mod.item.gun;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -18,8 +18,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 
-public final class ServerBulletUtil {
-    private ServerBulletUtil() {
+public final class BulletCollision {
+    private BulletCollision() {
         throw new AssertionError();
     }
 
@@ -33,7 +33,7 @@ public final class ServerBulletUtil {
         return BlockGetter.traverseBlocks(
             clipContext.getFrom(), clipContext.getTo(), clipContext,
             (context, pos) -> clipTraversedBlockPos(levelView, context, pos),
-            ServerBulletUtil::getBlockMiss
+            BulletCollision::getBlockMiss
         );
     }
 
@@ -48,7 +48,6 @@ public final class ServerBulletUtil {
         if (blockHit != null) {
             return blockHit;
         }
-
 
         FluidState fluidState = levelView.getFluidState(pos);
         if (fluidState.isEmpty()) {

@@ -1,4 +1,4 @@
-package dev.vuis.cccr.mod.server.bullet;
+package dev.vuis.cccr.mod.item.gun;
 
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;

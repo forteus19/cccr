@@ -23,6 +23,7 @@ public final class CCSoundsProvider extends FabricSoundsProvider {
 
     @Override
     protected void configure(HolderLookup.@NonNull Provider registryLookup, @NonNull SoundExporter exporter) {
+        add(exporter, CCSoundEvents.ITEM_GUN_EMPTY, "item/gun/empty", false);
         add(exporter, CCSoundEvents.ITEM_GUN_DESERT_EAGLE_RELOAD, "item/gun/desert_eagle/reload", false);
         add(exporter, CCSoundEvents.ITEM_GUN_DESERT_EAGLE_SHOOT, "item/gun/desert_eagle/shoot", false);
     }

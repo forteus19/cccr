@@ -9,6 +9,7 @@ import net.minecraft.world.item.Item;
 
 import dev.vuis.cccr.mod.data.Ammo;
 import dev.vuis.cccr.mod.item.GunItem;
+import dev.vuis.cccr.mod.item.gun.FireMode;
 
 public final class CCItems {
 	public static final GunItem DESERT_EAGLE = register(
@@ -17,6 +18,8 @@ public final class CCItems {
 			properties,
 			new GunItem.Settings()
 				.damage(10)
+				.fireModes(FireMode.SEMI)
+				.shootDelay(5)
 				.maxAmmo(new Ammo(7, 14))
 				.reloadTicks(35)
 				.soundShoot(() -> CCSoundEvents.ITEM_GUN_DESERT_EAGLE_SHOOT)
