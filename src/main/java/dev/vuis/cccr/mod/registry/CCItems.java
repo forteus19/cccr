@@ -18,6 +18,7 @@ public final class CCItems {
 			new GunItem.Settings()
 				.damage(10)
 				.maxAmmo(new Ammo(7, 14))
+				.reloadTicks(35)
 				.soundShoot(() -> CCSoundEvents.ITEM_GUN_DESERT_EAGLE_SHOOT)
 				.soundReload(() -> CCSoundEvents.ITEM_GUN_DESERT_EAGLE_RELOAD)
 		)

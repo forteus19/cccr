@@ -4,11 +4,14 @@ import java.util.Objects;
 import java.util.function.Supplier;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -20,23 +23,27 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import dev.vuis.cccr.mod.data.Ammo;
 import dev.vuis.cccr.mod.registry.CCDataComponents;
 import dev.vuis.cccr.mod.server.bullet.BulletHitResult;
 import dev.vuis.cccr.mod.server.bullet.ServerBulletUtil;
+import dev.vuis.cccr.mod.text.CCTexts;
 
 public class GunItem extends Item {
 	private final int damage;
 	private final @NonNull Ammo maxAmmo;
+	private final int maxReloadTicks;
 	private final @NonNull Supplier<SoundEvent> soundShoot;
 	private final @NonNull Supplier<SoundEvent> soundReload;
 
 	public GunItem(Properties properties, Settings gunSettings) {
 		super(gunSettings.setComponentDefaults(properties));
 
-		this.damage = gunSettings.damage;
-        this.maxAmmo = Objects.requireNonNull(gunSettings.maxAmmo);
+		this.damage = Objects.requireNonNull(gunSettings.damage, "damage");
+        this.maxAmmo = Objects.requireNonNull(gunSettings.maxAmmo, "maxAmmo");
+		this.maxReloadTicks = Objects.requireNonNull(gunSettings.reloadTicks, "reloadTicks");
 		this.soundShoot = Objects.requireNonNull(gunSettings.soundShoot, "soundShoot");
 		this.soundReload = Objects.requireNonNull(gunSettings.soundReload, "soundReload");
     }
@@ -49,6 +56,24 @@ public class GunItem extends Item {
 		stack.set(CCDataComponents.AMMO, ammo);
 	}
 
+	public static int getReloadTicks(ItemStack stack) {
+		return stack.getOrDefault(CCDataComponents.RELOAD_TICKS, 0);
+	}
+
+	public static void setReloadTicks(ItemStack stack, int reloadTicks) {
+		stack.set(CCDataComponents.RELOAD_TICKS, reloadTicks);
+	}
+
+	@Override
+	public void inventoryTick(@NonNull ItemStack stack, @NonNull ServerLevel level, @NonNull Entity owner, @Nullable EquipmentSlot slot) {
+		super.inventoryTick(stack, level, owner, slot);
+
+		int reloadTicks = getReloadTicks(stack);
+		if (reloadTicks > 0) {
+			setReloadTicks(stack, reloadTicks - 1);
+		}
+	}
+
 	@Override
 	public @NonNull InteractionResult use(@NonNull Level level, @NonNull Player player, @NonNull InteractionHand hand) {
 		if (!(level instanceof ServerLevel serverLevel)) {
@@ -56,6 +81,10 @@ public class GunItem extends Item {
 		}
 
 		ItemStack stack = player.getItemInHand(hand);
+
+		if (getReloadTicks(stack) > 0) {
+			return InteractionResult.CONSUME;
+		}
 
 		Ammo ammo = getAmmo(stack);
 		if (ammo.loaded() == 0) {
@@ -110,11 +139,29 @@ public class GunItem extends Item {
 		return InteractionResult.CONSUME;
 	}
 
+	@Override
+	public @NonNull Component getName(@NonNull ItemStack stack) {
+		Component name = super.getName(stack);
+
+		if (getReloadTicks(stack) > 0) {
+			name = name.copy().append(" ").append(CCTexts.GUN_MESSAGE_RELOADING.get());
+		}
+
+		return name;
+	}
+
 	public void reload(@NonNull Level level, @NonNull Player player, @NonNull ItemStack stack) {
+		int reloadTicks = getReloadTicks(stack);
+		if (reloadTicks > 0) {
+			return;
+		}
+
 		Ammo ammo = getAmmo(stack);
 		if (ammo.loaded() >= maxAmmo.loaded() || ammo.reserve() == 0) {
 			return;
 		}
+
+		setReloadTicks(stack, maxReloadTicks);
 
 		int usedAmmo = maxAmmo.loaded() - ammo.loaded();
 		setAmmo(stack, new Ammo(
@@ -131,10 +178,11 @@ public class GunItem extends Item {
 	}
 
 	public static final class Settings {
-		private int damage = 5;
-		private Ammo maxAmmo = null;
-		private Supplier<SoundEvent> soundShoot = null;
-		private Supplier<SoundEvent> soundReload = null;
+		private Integer damage;
+		private Ammo maxAmmo;
+		private Integer reloadTicks;
+		private Supplier<SoundEvent> soundShoot;
+		private Supplier<SoundEvent> soundReload;
 
 		public Settings damage(int damage) {
 			this.damage = damage;
@@ -153,6 +201,11 @@ public class GunItem extends Item {
 
 		public Settings soundReload(Supplier<SoundEvent> soundReload) {
 			this.soundReload = soundReload;
+			return this;
+		}
+
+		public Settings reloadTicks(int reloadTicks) {
+			this.reloadTicks = reloadTicks;
 			return this;
 		}
 

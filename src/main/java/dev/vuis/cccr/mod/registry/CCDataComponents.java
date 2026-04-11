@@ -3,6 +3,8 @@ package dev.vuis.cccr.mod.registry;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.util.ExtraCodecs;
 
 import dev.vuis.cccr.mod.CounterCraft;
 import dev.vuis.cccr.mod.data.Ammo;
@@ -12,6 +14,12 @@ public final class CCDataComponents {
         "ammo", DataComponentType.<Ammo>builder()
             .persistent(Ammo.CODEC)
             .networkSynchronized(Ammo.STREAM_CODEC)
+    );
+    public static final DataComponentType<Integer> RELOAD_TICKS = register(
+        "reload_ticks", DataComponentType.<Integer>builder()
+            .persistent(ExtraCodecs.NON_NEGATIVE_INT)
+            .networkSynchronized(ByteBufCodecs.VAR_INT)
+            .ignoreSwapAnimation()
     );
 
     private CCDataComponents() {
