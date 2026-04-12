@@ -17,10 +17,24 @@ public final class CCItems {
 		properties -> new GunItem(
 			properties,
 			new GunItem.Settings()
-				.damage(10)
+				.damage(6)
 				.fireModes(FireMode.SEMI)
 				.shootDelay(5)
 				.maxAmmo(new Ammo(7, 14))
+				.reloadTicks(35)
+				.soundShoot(() -> CCSoundEvents.ITEM_GUN_DESERT_EAGLE_SHOOT)
+				.soundReload(() -> CCSoundEvents.ITEM_GUN_DESERT_EAGLE_RELOAD)
+		)
+	);
+	public static final GunItem AK_74 = register(
+		"ak_74", new Item.Properties().stacksTo(1),
+		properties -> new GunItem(
+			properties,
+			new GunItem.Settings()
+				.damage(8)
+				.fireModes(FireMode.AUTO, FireMode.SEMI)
+				.shootDelay(2)
+				.maxAmmo(new Ammo(31, 62))
 				.reloadTicks(35)
 				.soundShoot(() -> CCSoundEvents.ITEM_GUN_DESERT_EAGLE_SHOOT)
 				.soundReload(() -> CCSoundEvents.ITEM_GUN_DESERT_EAGLE_RELOAD)

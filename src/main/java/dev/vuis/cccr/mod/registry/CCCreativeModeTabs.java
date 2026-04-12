@@ -16,6 +16,7 @@ public final class CCCreativeModeTabs {
         .title(Component.translatable("itemGroup.cccr.guns"))
         .displayItems((_, output) -> {
             output.accept(CCItems.DESERT_EAGLE);
+            output.accept(CCItems.AK_74);
         })
         .build()
     );

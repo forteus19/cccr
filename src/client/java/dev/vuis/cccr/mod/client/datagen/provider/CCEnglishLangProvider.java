@@ -24,5 +24,6 @@ public final class CCEnglishLangProvider extends FabricLanguageProvider {
         builder.add(CCCreativeModeTabs.KEY_GUNS, "CounterCraft Guns");
 
         builder.add(CCItems.DESERT_EAGLE, "Desert Eagle");
+        builder.add(CCItems.AK_74, "AK-74");
     }
 }

@@ -20,5 +20,6 @@ public final class CCModelProvider extends FabricModelProvider {
     @Override
     public void generateItemModels(@NonNull ItemModelGenerators generators) {
         generators.declareCustomModelItem(CCItems.DESERT_EAGLE);
+        generators.declareCustomModelItem(CCItems.AK_74);
     }
 }
