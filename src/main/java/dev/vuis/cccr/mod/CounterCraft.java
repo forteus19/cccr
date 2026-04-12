@@ -1,10 +1,5 @@
 package dev.vuis.cccr.mod;
 
-import net.fabricmc.api.ModInitializer;
-import net.minecraft.resources.Identifier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import dev.vuis.cccr.mod.item.tooltip.CCTooltipProviderSetup;
 import dev.vuis.cccr.mod.net.CCPacketRegistrySetup;
 import dev.vuis.cccr.mod.net.CCServerboundPacketHandlerSetup;
@@ -12,6 +7,10 @@ import dev.vuis.cccr.mod.registry.CCCreativeModeTabs;
 import dev.vuis.cccr.mod.registry.CCDataComponents;
 import dev.vuis.cccr.mod.registry.CCItems;
 import dev.vuis.cccr.mod.registry.CCSoundEvents;
+import net.fabricmc.api.ModInitializer;
+import net.minecraft.resources.Identifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class CounterCraft implements ModInitializer {
 	public static final String MOD_ID = "cccr";

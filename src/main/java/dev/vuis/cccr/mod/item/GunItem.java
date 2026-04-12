@@ -1,5 +1,10 @@
 package dev.vuis.cccr.mod.item;
 
+import dev.vuis.cccr.mod.data.Ammo;
+import dev.vuis.cccr.mod.item.gun.FireMode;
+import dev.vuis.cccr.mod.item.gun.SpreadValues;
+import dev.vuis.cccr.mod.registry.CCDataComponents;
+import dev.vuis.cccr.mod.text.CCTexts;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
@@ -13,17 +18,13 @@ import net.minecraft.world.item.ItemStack;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-import dev.vuis.cccr.mod.data.Ammo;
-import dev.vuis.cccr.mod.item.gun.FireMode;
-import dev.vuis.cccr.mod.registry.CCDataComponents;
-import dev.vuis.cccr.mod.text.CCTexts;
-
 public class GunItem extends Item {
 	public final int damage;
-	public final FireMode[] fireModes;
+	public final @NonNull FireMode[] fireModes;
 	public final int shootDelay;
 	public final @NonNull Ammo maxAmmo;
 	public final int maxReloadTicks;
+	public final @NonNull SpreadValues spread;
 
 	public final @NonNull Supplier<SoundEvent> soundShoot;
 	public final @NonNull Supplier<SoundEvent> soundReload;
@@ -36,12 +37,13 @@ public class GunItem extends Item {
 		this.damage = Objects.requireNonNull(gunSettings.damage, "damage");
 		this.fireModes = Objects.requireNonNull(gunSettings.fireModes, "fireModes");
 		this.shootDelay = Objects.requireNonNull(gunSettings.shootDelay, "shootDelay");
-        this.maxAmmo = Objects.requireNonNull(gunSettings.maxAmmo, "maxAmmo");
+		this.maxAmmo = Objects.requireNonNull(gunSettings.maxAmmo, "maxAmmo");
 		this.maxReloadTicks = Objects.requireNonNull(gunSettings.reloadTicks, "reloadTicks");
+		this.spread = Objects.requireNonNull(gunSettings.spread, "spread");
 
 		this.soundShoot = Objects.requireNonNull(gunSettings.soundShoot, "soundShoot");
 		this.soundReload = Objects.requireNonNull(gunSettings.soundReload, "soundReload");
-    }
+	}
 
 	public static Ammo getAmmo(ItemStack stack) {
 		return stack.getOrDefault(CCDataComponents.AMMO, Ammo.EMPTY);
@@ -90,6 +92,7 @@ public class GunItem extends Item {
 		private Integer shootDelay;
 		private Ammo maxAmmo;
 		private Integer reloadTicks;
+		private SpreadValues spread;
 
 		private Supplier<SoundEvent> soundShoot;
 		private Supplier<SoundEvent> soundReload;
@@ -116,6 +119,11 @@ public class GunItem extends Item {
 
 		public Settings reloadTicks(int reloadTicks) {
 			this.reloadTicks = reloadTicks;
+			return this;
+		}
+
+		public Settings spread(SpreadValues spread) {
+			this.spread = spread;
 			return this;
 		}
 

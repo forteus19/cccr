@@ -1,29 +1,28 @@
 package dev.vuis.cccr.mod.client.datagen.provider;
 
+import dev.vuis.cccr.mod.registry.CCCreativeModeTabs;
+import dev.vuis.cccr.mod.registry.CCItems;
+import dev.vuis.cccr.mod.text.CCTexts;
 import java.util.concurrent.CompletableFuture;
 import net.fabricmc.fabric.api.datagen.v1.FabricPackOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricLanguageProvider;
 import net.minecraft.core.HolderLookup;
 import org.jspecify.annotations.NonNull;
 
-import dev.vuis.cccr.mod.registry.CCCreativeModeTabs;
-import dev.vuis.cccr.mod.registry.CCItems;
-import dev.vuis.cccr.mod.text.CCTexts;
-
 public final class CCEnglishLangProvider extends FabricLanguageProvider {
-    public CCEnglishLangProvider(FabricPackOutput packOutput, CompletableFuture<HolderLookup.Provider> registryLookup) {
-        super(packOutput, registryLookup);
-    }
+	public CCEnglishLangProvider(FabricPackOutput packOutput, CompletableFuture<HolderLookup.Provider> registryLookup) {
+		super(packOutput, registryLookup);
+	}
 
-    @Override
-    public void generateTranslations(HolderLookup.@NonNull Provider registryLookup, @NonNull TranslationBuilder builder) {
-        for (CCTexts.Base instance : CCTexts.instances()) {
-            builder.add(instance.getKey(), instance.getEnglishText());
-        }
+	@Override
+	public void generateTranslations(HolderLookup.@NonNull Provider registryLookup, @NonNull TranslationBuilder builder) {
+		for (CCTexts.Base instance : CCTexts.instances()) {
+			builder.add(instance.getKey(), instance.getEnglishText());
+		}
 
-        builder.add(CCCreativeModeTabs.KEY_GUNS, "CounterCraft Guns");
+		builder.add(CCCreativeModeTabs.KEY_GUNS, "CounterCraft Guns");
 
-        builder.add(CCItems.DESERT_EAGLE, "Desert Eagle");
-        builder.add(CCItems.AK_74, "AK-74");
-    }
+		builder.add(CCItems.DESERT_EAGLE, "Desert Eagle");
+		builder.add(CCItems.AK_74, "AK-74");
+	}
 }

@@ -10,29 +10,29 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
 
 public final class CCCreativeModeTabs {
-    public static final ResourceKey<CreativeModeTab> KEY_GUNS = createKey("guns");
-    public static final CreativeModeTab TAB_GUNS = register(KEY_GUNS, FabricCreativeModeTab.builder()
-        .icon(() -> new ItemStack(CCItems.DESERT_EAGLE))
-        .title(Component.translatable("itemGroup.cccr.guns"))
-        .displayItems((_, output) -> {
-            output.accept(CCItems.DESERT_EAGLE);
-            output.accept(CCItems.AK_74);
-        })
-        .build()
-    );
+	public static final ResourceKey<CreativeModeTab> KEY_GUNS = createKey("guns");
+	public static final CreativeModeTab TAB_GUNS = register(KEY_GUNS, FabricCreativeModeTab.builder()
+		.icon(() -> new ItemStack(CCItems.DESERT_EAGLE))
+		.title(Component.translatable("itemGroup.cccr.guns"))
+		.displayItems((_, output) -> {
+			output.accept(CCItems.DESERT_EAGLE);
+			output.accept(CCItems.AK_74);
+		})
+		.build()
+	);
 
-    private CCCreativeModeTabs() {
-    }
+	private CCCreativeModeTabs() {
+	}
 
-    private static ResourceKey<CreativeModeTab> createKey(String id) {
-        return CCRegistryUtil.createKey(Registries.CREATIVE_MODE_TAB, id);
-    }
+	private static ResourceKey<CreativeModeTab> createKey(String id) {
+		return CCRegistryUtil.createKey(Registries.CREATIVE_MODE_TAB, id);
+	}
 
-    private static CreativeModeTab register(ResourceKey<CreativeModeTab> key, CreativeModeTab tab) {
-        Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, key, tab);
-        return tab;
-    }
+	private static CreativeModeTab register(ResourceKey<CreativeModeTab> key, CreativeModeTab tab) {
+		Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, key, tab);
+		return tab;
+	}
 
-    public static void init() {
-    }
+	public static void init() {
+	}
 }
