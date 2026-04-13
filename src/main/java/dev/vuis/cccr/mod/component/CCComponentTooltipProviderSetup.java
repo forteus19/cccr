@@ -1,10 +1,10 @@
-package dev.vuis.cccr.mod.item.tooltip;
+package dev.vuis.cccr.mod.component;
 
 import dev.vuis.cccr.mod.registry.CCDataComponents;
 import net.fabricmc.fabric.api.item.v1.ItemComponentTooltipProviderRegistry;
 
-public final class CCTooltipProviderSetup {
-	private CCTooltipProviderSetup() {
+public final class CCComponentTooltipProviderSetup {
+	private CCComponentTooltipProviderSetup() {
 		throw new AssertionError();
 	}
 

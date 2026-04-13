@@ -1,6 +1,6 @@
 package dev.vuis.cccr.mod;
 
-import dev.vuis.cccr.mod.item.tooltip.CCTooltipProviderSetup;
+import dev.vuis.cccr.mod.component.CCComponentTooltipProviderSetup;
 import dev.vuis.cccr.mod.net.CCPacketRegistrySetup;
 import dev.vuis.cccr.mod.net.CCServerboundPacketHandlerSetup;
 import dev.vuis.cccr.mod.registry.CCCreativeModeTabs;
@@ -37,7 +37,7 @@ public final class CounterCraft implements ModInitializer {
 		CCServerboundPacketHandlerSetup.register();
 
 		LOGGER.info("Registering tooltip providers");
-		CCTooltipProviderSetup.register();
+		CCComponentTooltipProviderSetup.register();
 	}
 
 	public static Identifier id(String path) {
