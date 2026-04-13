@@ -17,12 +17,13 @@ public final class CCItems {
 		properties -> new GunItem(
 			properties,
 			new GunItem.Settings()
-				.damage(6)
+				.damage(6f)
 				.fireModes(FireMode.SEMI)
 				.shootDelay(5)
 				.maxAmmo(new Ammo(7, 14))
 				.reloadTicks(35)
-				.spread(new SpreadValues(14f, 1.2f, 2f, 6f, 0.75f, 1f, 8f, 100f))
+				.spread(new SpreadValues(14f, 2.4f, 4f, 6f, 1.5f, 2f, 8f, 100f))
+				.shootAfterSpread(false)
 				.soundShoot(() -> CCSoundEvents.ITEM_GUN_DESERT_EAGLE_SHOOT)
 				.soundReload(() -> CCSoundEvents.ITEM_GUN_DESERT_EAGLE_RELOAD)
 		)
@@ -32,12 +33,13 @@ public final class CCItems {
 		properties -> new GunItem(
 			properties,
 			new GunItem.Settings()
-				.damage(8)
+				.damage(8f)
 				.fireModes(FireMode.AUTO, FireMode.SEMI)
 				.shootDelay(2)
 				.maxAmmo(new Ammo(31, 62))
 				.reloadTicks(35)
-				.spread(new SpreadValues(1.8f, 0.5f, 0.9f, 2f, 1.2f, 2.2f, 6.5f, 100f))
+				.spread(new SpreadValues(1.8f, 1f, 1.8f, 4f, 2.4f, 4.4f, 6.5f, 100f))
+				.shootAfterSpread(false)
 				.soundShoot(() -> CCSoundEvents.ITEM_GUN_DESERT_EAGLE_SHOOT)
 				.soundReload(() -> CCSoundEvents.ITEM_GUN_DESERT_EAGLE_RELOAD)
 		)

@@ -1,7 +1,7 @@
 package dev.vuis.cccr.mod.item.gun;
 
 import it.unimi.dsi.fastutil.Pair;
-import it.unimi.dsi.fastutil.objects.ObjectDoublePair;
+import it.unimi.dsi.fastutil.objects.ObjectFloatPair;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -28,7 +28,7 @@ public final class BulletCollision {
 		throw new AssertionError();
 	}
 
-	public static Pair<List<BlockHitResult>, List<ObjectDoublePair<EntityHitResult>>> bullet(Level level, ClipContext clipContext, int initialDamage) {
+	public static Pair<List<BlockHitResult>, List<ObjectFloatPair<EntityHitResult>>> bullet(Level level, ClipContext clipContext, float initialDamage) {
 		Vec3 from = clipContext.getFrom();
 		Vec3 to = clipContext.getTo();
 
@@ -83,8 +83,8 @@ public final class BulletCollision {
 		combinedHits.sort(comparingHitResultDistance(from));
 
 		List<BlockHitResult> finalBlockHits = new ArrayList<>();
-		List<ObjectDoublePair<EntityHitResult>> finalEntityHits = new ArrayList<>();
-		double damage = initialDamage;
+		List<ObjectFloatPair<EntityHitResult>> finalEntityHits = new ArrayList<>();
+		float damage = initialDamage;
 
 		hitLoop:
 		for (HitResult hit : combinedHits) {
@@ -103,7 +103,7 @@ public final class BulletCollision {
 					}
 				}
 				case EntityHitResult entityHit -> {
-					finalEntityHits.add(ObjectDoublePair.of(entityHit, damage));
+					finalEntityHits.add(ObjectFloatPair.of(entityHit, damage));
 				}
 				default -> throw new AssertionError();
 			}

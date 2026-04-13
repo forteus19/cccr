@@ -19,12 +19,13 @@ import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 public class GunItem extends Item {
-	public final int damage;
+	public final float damage;
 	public final @NonNull FireMode[] fireModes;
 	public final int shootDelay;
 	public final @NonNull Ammo maxAmmo;
 	public final int maxReloadTicks;
 	public final @NonNull SpreadValues spread;
+	public final boolean shootAfterSpread;
 
 	public final @NonNull Supplier<SoundEvent> soundShoot;
 	public final @NonNull Supplier<SoundEvent> soundReload;
@@ -40,6 +41,7 @@ public class GunItem extends Item {
 		this.maxAmmo = Objects.requireNonNull(gunSettings.maxAmmo, "maxAmmo");
 		this.maxReloadTicks = Objects.requireNonNull(gunSettings.reloadTicks, "reloadTicks");
 		this.spread = Objects.requireNonNull(gunSettings.spread, "spread");
+		this.shootAfterSpread = Objects.requireNonNull(gunSettings.shootAfterSpread, "shootAfterSpread");
 
 		this.soundShoot = Objects.requireNonNull(gunSettings.soundShoot, "soundShoot");
 		this.soundReload = Objects.requireNonNull(gunSettings.soundReload, "soundReload");
@@ -87,17 +89,18 @@ public class GunItem extends Item {
 	}
 
 	public static final class Settings {
-		private Integer damage;
+		private Float damage;
 		private FireMode[] fireModes;
 		private Integer shootDelay;
 		private Ammo maxAmmo;
 		private Integer reloadTicks;
 		private SpreadValues spread;
+		private Boolean shootAfterSpread;
 
 		private Supplier<SoundEvent> soundShoot;
 		private Supplier<SoundEvent> soundReload;
 
-		public Settings damage(int damage) {
+		public Settings damage(float damage) {
 			this.damage = damage;
 			return this;
 		}
@@ -124,6 +127,11 @@ public class GunItem extends Item {
 
 		public Settings spread(SpreadValues spread) {
 			this.spread = spread;
+			return this;
+		}
+
+		public Settings shootAfterSpread(boolean shootAfterSpread) {
+			this.shootAfterSpread = shootAfterSpread;
 			return this;
 		}
 

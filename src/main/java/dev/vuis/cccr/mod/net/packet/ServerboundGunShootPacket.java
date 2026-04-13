@@ -5,7 +5,7 @@ import dev.vuis.cccr.mod.data.Ammo;
 import dev.vuis.cccr.mod.item.GunItem;
 import io.netty.buffer.ByteBuf;
 import it.unimi.dsi.fastutil.Pair;
-import it.unimi.dsi.fastutil.ints.IntIntPair;
+import it.unimi.dsi.fastutil.ints.IntFloatPair;
 import java.util.List;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.BlockPos;
@@ -29,7 +29,7 @@ public record ServerboundGunShootPacket(
 	Vec3 from,
 	Vec3 to,
 	List<Pair<Vec3, BlockPos>> blockHits,
-	List<IntIntPair> entityHits // (entity id, damage)
+	List<IntFloatPair> entityHits // (entity id, damage)
 ) implements CustomPacketPayload {
 	public static final Type<ServerboundGunShootPacket> TYPE = new Type<>(CounterCraft.id("gun_shoot"));
 
@@ -38,10 +38,10 @@ public record ServerboundGunShootPacket(
 		BlockPos.STREAM_CODEC, Pair::right,
 		Pair::of
 	);
-	private static final StreamCodec<ByteBuf, IntIntPair> ENTITY_HIT_STREAM_CODEC = StreamCodec.composite(
-		ByteBufCodecs.VAR_INT, IntIntPair::leftInt,
-		ByteBufCodecs.VAR_INT, IntIntPair::leftInt,
-		IntIntPair::of
+	private static final StreamCodec<ByteBuf, IntFloatPair> ENTITY_HIT_STREAM_CODEC = StreamCodec.composite(
+		ByteBufCodecs.VAR_INT, IntFloatPair::leftInt,
+		ByteBufCodecs.FLOAT, IntFloatPair::rightFloat,
+		IntFloatPair::of
 	);
 	public static final StreamCodec<ByteBuf, ServerboundGunShootPacket> STREAM_CODEC = StreamCodec.composite(
 		Vec3.STREAM_CODEC, ServerboundGunShootPacket::from,
@@ -95,7 +95,7 @@ public record ServerboundGunShootPacket(
 			}
 		}
 
-		for (IntIntPair entityHit : entityHits) {
+		for (IntFloatPair entityHit : entityHits) {
 			Entity entity = level.getEntity(entityHit.leftInt());
 			if (!(entity instanceof LivingEntity livingEntity)) {
 				continue;
@@ -103,7 +103,7 @@ public record ServerboundGunShootPacket(
 
 			livingEntity.hurtTime = 0;
 			livingEntity.invulnerableTime = 0;
-			if (livingEntity.hurtServer(level, level.damageSources().playerAttack(player), gunItem.damage)) {
+			if (livingEntity.hurtServer(level, level.damageSources().playerAttack(player), entityHit.rightFloat())) {
 				livingEntity.setDeltaMovement(0.0, 0.0, 0.0);
 			}
 		}

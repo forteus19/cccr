@@ -5,11 +5,12 @@ import dev.vuis.cccr.mod.data.Ammo;
 import dev.vuis.cccr.mod.item.GunItem;
 import dev.vuis.cccr.mod.item.gun.BulletCollision;
 import dev.vuis.cccr.mod.item.gun.FireMode;
+import dev.vuis.cccr.mod.item.gun.SpreadValues;
 import dev.vuis.cccr.mod.net.packet.ServerboundGunReloadPacket;
 import dev.vuis.cccr.mod.net.packet.ServerboundGunShootPacket;
 import dev.vuis.cccr.mod.registry.CCSoundEvents;
 import it.unimi.dsi.fastutil.Pair;
-import it.unimi.dsi.fastutil.ints.IntIntPair;
+import it.unimi.dsi.fastutil.ints.IntFloatPair;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -17,6 +18,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.Vec3;
@@ -31,6 +33,7 @@ public final class GunItemClient {
 	private static final float MAX_SPREAD = 12f;
 	private static final float MIN_SPREAD = 0.1f;
 	private static float currentSpread = MIN_SPREAD;
+	private static float prevSpread = currentSpread;
 
 	private GunItemClient() {
 		throw new AssertionError();
@@ -72,6 +75,9 @@ public final class GunItemClient {
 			gunData.shootCooldown--;
 		}
 
+		prevSpread = currentSpread;
+		updateSpread(player, item);
+
 		if (minecraft.screen != null) {
 			return;
 		}
@@ -94,6 +100,38 @@ public final class GunItemClient {
 				emptySound(level, player);
 			}
 		}
+	}
+
+	private static void updateSpread(
+		@NonNull LocalPlayer player,
+		@NonNull GunItem item
+	) {
+		SpreadValues spread = item.spread;
+
+		Vec3 velocity = player.getDeltaMovement();
+
+		if (!player.onGround() || player.fallDistance >= 0.6 || velocity.y >= 0.0) {
+			addSpread(spread.increaseJumping());
+			return;
+		}
+
+		if (player.isCrouching()) {
+			decreaseSpread(spread.decreaseShift());
+			return;
+		}
+
+		if (player.isSprinting()) {
+			addSpread(spread.increaseRunning(), spread.maxRunning());
+			return;
+		}
+
+		double movement = (Math.abs(velocity.x * velocity.x) + Math.abs(velocity.z * velocity.z));
+		if (movement > 0.004) {
+			addSpread(spread.increaseWalking(), spread.maxWalking());
+			return;
+		}
+
+		decreaseSpread(spread.decrease());
 	}
 
 	private static void reload() {
@@ -121,8 +159,20 @@ public final class GunItemClient {
 		@NonNull LocalPlayer player,
 		@NonNull GunItem item
 	) {
+		float spreadIncreaseFired = item.spread.increaseFired();
+
+		if (item.shootAfterSpread) {
+			addSpread(spreadIncreaseFired);
+		}
+
 		Vec3 collisionFrom = player.getEyePosition();
-		Vec3 collisionTo = collisionFrom.add(player.getViewVector(1f).scale(64.0));
+		Vec3 collisionTo = collisionFrom.add(
+			applySpread(level.getRandom(), player.getXRot(), player.getYRot()).scale(64.0)
+		);
+
+		if (!item.shootAfterSpread) {
+			addSpread(spreadIncreaseFired);
+		}
 
         var hits = BulletCollision.bullet(
             level,
@@ -139,7 +189,7 @@ public final class GunItemClient {
             // block hits
             hits.left().stream().map(hit -> Pair.of(hit.getLocation(), hit.getBlockPos())).toList(),
             // entity hits
-            hits.right().stream().map(hit -> IntIntPair.of(hit.left().getEntity().getId(), Mth.ceil(hit.rightDouble()))).toList()
+            hits.right().stream().map(hit -> IntFloatPair.of(hit.left().getEntity().getId(), Mth.ceil(hit.rightFloat()))).toList()
         ));
 
 		level.playSound(
@@ -148,6 +198,22 @@ public final class GunItemClient {
 			item.soundShoot.get(), SoundSource.PLAYERS,
 			1f, 1f
 		);
+	}
+
+	private static Vec3 applySpread(
+		@NonNull RandomSource random,
+		float pitch,
+		float yaw
+	) {
+		if (random.nextInt(5) != 0) {
+			float yawOffset = random.nextFloat() * currentSpread * 1.5f;
+			yaw += random.nextBoolean() ? yawOffset : -yawOffset;
+		}
+
+		float pitchOffset = random.nextFloat() * currentSpread * 1.5f;
+		pitch -= pitchOffset;
+
+		return Vec3.directionFromRotation(pitch, yaw);
 	}
 
 	private static void emptySound(
@@ -162,16 +228,20 @@ public final class GunItemClient {
 		);
 	}
 
-	private static void addSpread(float amount) {
-		if ((currentSpread += amount) > MAX_SPREAD) {
-			currentSpread = MAX_SPREAD;
-		}
+	public static float currentSpread(float partialTick) {
+		return Mth.lerp(partialTick, prevSpread, currentSpread);
 	}
 
-	private static void decreaseSpread(float amount) {
-		if ((currentSpread -= amount) < MIN_SPREAD) {
-			currentSpread = MIN_SPREAD;
-		}
+	public static void addSpread(float amount, float cap) {
+		currentSpread = Math.min(currentSpread + amount, Math.min(cap, MAX_SPREAD));
+	}
+
+	public static void addSpread(float amount) {
+		addSpread(amount, MAX_SPREAD);
+	}
+
+	public static void decreaseSpread(float amount) {
+		currentSpread = Math.max(currentSpread - amount, MIN_SPREAD);
 	}
 
 	private static final class Data {

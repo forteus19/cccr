@@ -6,7 +6,7 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 
 public final class CCClientEvents {
@@ -25,7 +25,7 @@ public final class CCClientEvents {
 			return;
 		}
 
-		ItemStack heldStack = player.getItemInHand(InteractionHand.MAIN_HAND);
+		ItemStack heldStack = player.getItemBySlot(EquipmentSlot.MAINHAND);
 		if (heldStack.getItem() instanceof GunItem gunItem) {
 			GunItemClient.tick(minecraft, gunItem, heldStack, level, player);
 		}
