@@ -144,7 +144,7 @@ public final class GunItemClient {
 		@NonNull GunItem item,
 		@NonNull Data gunData
 	) {
-		gunData.fireModeIndex = item.fireModes[(gunData.fireModeIndex + 1) % item.fireModes.length].ordinal();
+		gunData.fireModeIndex = (gunData.fireModeIndex + 1) % item.fireModes.length;
 
 		level.playSound(
 			player,
