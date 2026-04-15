@@ -24,7 +24,7 @@ public abstract class GuiMixin {
 		at = @At("HEAD"),
 		cancellable = true
 	)
-	private void cccr$disableCrosshairWhenHoldingGun(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker, CallbackInfo ci) {
+	private void disableCrosshairWhenHoldingGun(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker, CallbackInfo ci) {
 		if (minecraft.player != null && minecraft.player.getItemBySlot(EquipmentSlot.MAINHAND).getItem() instanceof GunItem) {
 			ci.cancel();
 		}

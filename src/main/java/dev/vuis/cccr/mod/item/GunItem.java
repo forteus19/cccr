@@ -26,6 +26,7 @@ public class GunItem extends Item {
 	public final int maxReloadTicks;
 	public final @NonNull SpreadValues spread;
 	public final boolean shootAfterSpread;
+	public final float recoil;
 
 	public final @NonNull Supplier<SoundEvent> soundShoot;
 	public final @NonNull Supplier<SoundEvent> soundReload;
@@ -42,6 +43,7 @@ public class GunItem extends Item {
 		this.maxReloadTicks = Objects.requireNonNull(gunSettings.reloadTicks, "reloadTicks");
 		this.spread = Objects.requireNonNull(gunSettings.spread, "spread");
 		this.shootAfterSpread = Objects.requireNonNull(gunSettings.shootAfterSpread, "shootAfterSpread");
+		this.recoil = Objects.requireNonNull(gunSettings.recoil, "recoil");
 
 		this.soundShoot = Objects.requireNonNull(gunSettings.soundShoot, "soundShoot");
 		this.soundReload = Objects.requireNonNull(gunSettings.soundReload, "soundReload");
@@ -96,6 +98,7 @@ public class GunItem extends Item {
 		private Integer reloadTicks;
 		private SpreadValues spread;
 		private Boolean shootAfterSpread;
+		private Float recoil;
 
 		private Supplier<SoundEvent> soundShoot;
 		private Supplier<SoundEvent> soundReload;
@@ -132,6 +135,11 @@ public class GunItem extends Item {
 
 		public Settings shootAfterSpread(boolean shootAfterSpread) {
 			this.shootAfterSpread = shootAfterSpread;
+			return this;
+		}
+
+		public Settings recoil(float recoil) {
+			this.recoil = recoil;
 			return this;
 		}
 

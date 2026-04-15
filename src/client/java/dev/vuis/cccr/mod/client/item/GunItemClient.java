@@ -12,6 +12,7 @@ import dev.vuis.cccr.mod.registry.CCSoundEvents;
 import it.unimi.dsi.fastutil.Pair;
 import it.unimi.dsi.fastutil.ints.IntFloatPair;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
@@ -32,8 +33,13 @@ public final class GunItemClient {
 
 	private static final float MAX_SPREAD = 12f;
 	private static final float MIN_SPREAD = 0.1f;
-	private static float currentSpread = MIN_SPREAD;
+	private static float currentSpread = MAX_SPREAD;
 	private static float prevSpread = currentSpread;
+
+	private static final float RECOIL_TICK_SCALE_BASE = 0.15f;
+	private static float currentRecoilPitch = 0f;
+	private static float currentRecoilYawLeft = 0f;
+	private static float currentRecoilYawRight = 0f;
 
 	private GunItemClient() {
 		throw new AssertionError();
@@ -102,6 +108,13 @@ public final class GunItemClient {
 		}
 	}
 
+	public static void renderTick(
+		@NonNull Minecraft minecraft,
+		@NonNull LocalPlayer player
+	) {
+		updateRecoil(player, minecraft.getDeltaTracker());
+	}
+
 	private static void updateSpread(
 		@NonNull LocalPlayer player,
 		@NonNull GunItem item
@@ -132,6 +145,28 @@ public final class GunItemClient {
 		}
 
 		decreaseSpread(spread.decrease());
+	}
+
+	private static void updateRecoil(
+		@NonNull LocalPlayer player,
+		@NonNull DeltaTracker delta
+	) {
+		float realtimeDelta = delta.getRealtimeDeltaTicks();
+		float recoilTickScale = getRecoilTickScale(realtimeDelta);
+
+		currentRecoilPitch *= recoilTickScale;
+		currentRecoilYawLeft *= recoilTickScale;
+		currentRecoilYawRight *= recoilTickScale;
+
+		float pitchOffset = -currentRecoilPitch * realtimeDelta;
+		player.setXRot(player.getXRot() + pitchOffset);
+
+		float yawOffset = (-currentRecoilYawLeft + currentRecoilYawRight) * realtimeDelta;
+		player.setYRot(player.getYRot() + yawOffset);
+	}
+
+	private static float getRecoilTickScale(float realtimeDelta) {
+		return (float) Math.pow(RECOIL_TICK_SCALE_BASE, realtimeDelta);
 	}
 
 	private static void reload() {
@@ -192,6 +227,8 @@ public final class GunItemClient {
             hits.right().stream().map(hit -> IntFloatPair.of(hit.left().getEntity().getId(), Mth.ceil(hit.rightFloat()))).toList()
         ));
 
+		applyRecoil(level.getRandom(), item.recoil);
+
 		level.playSound(
 			player,
 			player.getX(), player.getY(), player.getZ(),
@@ -214,6 +251,21 @@ public final class GunItemClient {
 		pitch -= pitchOffset;
 
 		return Vec3.directionFromRotation(pitch, yaw);
+	}
+
+	private static void applyRecoil(
+		@NonNull RandomSource random,
+		float recoil
+	) {
+		recoil += 0.5f - random.nextFloat();
+
+		switch (random.nextInt(3)) {
+			case 0 -> currentRecoilPitch += recoil;
+			case 1 -> currentRecoilYawLeft += recoil / 5f;
+			case 2 -> currentRecoilYawRight += recoil / 5f;
+		}
+
+		currentRecoilPitch += recoil / 2f;
 	}
 
 	private static void emptySound(

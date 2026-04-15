@@ -1,6 +1,6 @@
 package dev.vuis.cccr.mod;
 
-import dev.vuis.cccr.mod.component.CCComponentTooltipProviderSetup;
+import dev.vuis.cccr.mod.item.component.CCComponentTooltipProviderSetup;
 import dev.vuis.cccr.mod.net.CCPacketRegistrySetup;
 import dev.vuis.cccr.mod.net.CCServerboundPacketHandlerSetup;
 import dev.vuis.cccr.mod.registry.CCCreativeModeTabs;
