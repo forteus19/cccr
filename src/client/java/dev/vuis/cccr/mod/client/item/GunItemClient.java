@@ -36,7 +36,7 @@ public final class GunItemClient {
 	private static float currentSpread = MAX_SPREAD;
 	private static float prevSpread = currentSpread;
 
-	private static final float RECOIL_TICK_SCALE_BASE = 0.15f;
+	private static final float RECOIL_TICK_SCALE = 0.15f;
 	private static float currentRecoilPitch = 0f;
 	private static float currentRecoilYawLeft = 0f;
 	private static float currentRecoilYawRight = 0f;
@@ -83,6 +83,7 @@ public final class GunItemClient {
 
 		prevSpread = currentSpread;
 		updateSpread(player, item);
+		updateRecoilValues();
 
 		if (minecraft.screen != null) {
 			return;
@@ -112,7 +113,7 @@ public final class GunItemClient {
 		@NonNull Minecraft minecraft,
 		@NonNull LocalPlayer player
 	) {
-		updateRecoil(player, minecraft.getDeltaTracker());
+		updateRecoilCamera(player, minecraft.getDeltaTracker());
 	}
 
 	private static void updateSpread(
@@ -147,26 +148,23 @@ public final class GunItemClient {
 		decreaseSpread(spread.decrease());
 	}
 
-	private static void updateRecoil(
+	private static void updateRecoilValues() {
+		currentRecoilPitch *= RECOIL_TICK_SCALE;
+		currentRecoilYawLeft *= RECOIL_TICK_SCALE;
+		currentRecoilYawRight *= RECOIL_TICK_SCALE;
+	}
+
+	private static void updateRecoilCamera(
 		@NonNull LocalPlayer player,
 		@NonNull DeltaTracker delta
 	) {
-		float realtimeDelta = delta.getRealtimeDeltaTicks();
-		float recoilTickScale = getRecoilTickScale(realtimeDelta);
+		float tickDelta = delta.getGameTimeDeltaTicks();
 
-		currentRecoilPitch *= recoilTickScale;
-		currentRecoilYawLeft *= recoilTickScale;
-		currentRecoilYawRight *= recoilTickScale;
-
-		float pitchOffset = -currentRecoilPitch * realtimeDelta;
+		float pitchOffset = -currentRecoilPitch * tickDelta;
 		player.setXRot(player.getXRot() + pitchOffset);
 
-		float yawOffset = (-currentRecoilYawLeft + currentRecoilYawRight) * realtimeDelta;
+		float yawOffset = (-currentRecoilYawLeft + currentRecoilYawRight) * tickDelta;
 		player.setYRot(player.getYRot() + yawOffset);
-	}
-
-	private static float getRecoilTickScale(float realtimeDelta) {
-		return (float) Math.pow(RECOIL_TICK_SCALE_BASE, realtimeDelta);
 	}
 
 	private static void reload() {
