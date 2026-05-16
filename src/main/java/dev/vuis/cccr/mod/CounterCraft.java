@@ -1,11 +1,16 @@
 package dev.vuis.cccr.mod;
 
+import dev.vuis.cccr.mod.command.CCCommandSetup;
+import dev.vuis.cccr.mod.command.arg.CCCommandArgumentSetup;
 import dev.vuis.cccr.mod.item.component.CCComponentTooltipProviderSetup;
+import dev.vuis.cccr.mod.match.MatchTypes;
 import dev.vuis.cccr.mod.net.CCPacketRegistrySetup;
 import dev.vuis.cccr.mod.net.CCServerboundPacketHandlerSetup;
 import dev.vuis.cccr.mod.registry.CCCreativeModeTabs;
 import dev.vuis.cccr.mod.registry.CCDataComponents;
+import dev.vuis.cccr.mod.registry.CCDynamicRegistrySetup;
 import dev.vuis.cccr.mod.registry.CCItems;
+import dev.vuis.cccr.mod.registry.CCRegistries;
 import dev.vuis.cccr.mod.registry.CCSoundEvents;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.resources.Identifier;
@@ -22,6 +27,10 @@ public final class CounterCraft implements ModInitializer {
 	public void onInitialize() {
 		LOGGER.info("Initializing for common");
 
+		LOGGER.info("Bootstrapping custom registries");
+		CCRegistries.init();
+		CCDynamicRegistrySetup.bootstrap();
+
 		LOGGER.info("Registering creative mode tabs");
 		CCCreativeModeTabs.init();
 		LOGGER.info("Registering data components");
@@ -31,6 +40,13 @@ public final class CounterCraft implements ModInitializer {
 		LOGGER.info("Registering sound events");
 		CCSoundEvents.init();
 
+		LOGGER.info("Registering match types");
+		MatchTypes.bootstrap();
+
+		LOGGER.info("Registering commands");
+		CCCommandSetup.register();
+		LOGGER.info("Registering custom command arguments");
+		CCCommandArgumentSetup.register();
 		LOGGER.info("Registering custom packets");
 		CCPacketRegistrySetup.register();
 		LOGGER.info("Registering serverbound packet handlers");

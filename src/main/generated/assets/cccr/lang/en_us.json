@@ -1,4 +1,5 @@
 {
+  "cccr.command.create.success": "Created match %s",
   "cccr.gun.message.reloading": "(Reloading)",
   "item.cccr.ak_74": "AK-74",
   "item.cccr.desert_eagle": "Desert Eagle",

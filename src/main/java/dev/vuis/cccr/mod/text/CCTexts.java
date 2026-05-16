@@ -1,16 +1,16 @@
 package dev.vuis.cccr.mod.text;
 
 import com.demonwav.mcdev.annotations.Translatable;
-import com.google.common.base.Suppliers;
 import dev.vuis.cccr.mod.CounterCraft;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Supplier;
 import net.minecraft.network.chat.Component;
 
 public final class CCTexts {
 	private static final List<Base> INSTANCES = new ArrayList<>();
+
+	public static final Dynamic COMMAND_CREATE_SUCCESS = new Dynamic("cccr.command.create.success", "Created match %s", 1);
 
 	public static final Singleton KEY_CATEGORY_CCCR = new Singleton("key.category.cccr.cccr", CounterCraft.DISPLAY_NAME);
 	public static final Singleton KEY_RELOAD = new Singleton("key.cccr.reload", "Reload");
@@ -47,15 +47,15 @@ public final class CCTexts {
 	}
 
 	public static final class Singleton extends Base {
-		private final Supplier<Component> componentSupplier;
+		private final Component component;
 
 		public Singleton(@Translatable(foldMethod = true) String key, String englishText) {
 			super(key, englishText);
-			this.componentSupplier = Suppliers.memoize(() -> Component.translatable(key));
+			this.component = Component.translatable(key);
 		}
 
 		public Component get() {
-			return componentSupplier.get();
+			return component;
 		}
 	}
 
@@ -72,7 +72,7 @@ public final class CCTexts {
 			return Component.translatable(key, args);
 		}
 
-		public Component stringy(Object... args) {
+		public Component escape(Object... args) {
 			checkArgsLength(args);
 			return Component.translatableEscape(key, args);
 		}

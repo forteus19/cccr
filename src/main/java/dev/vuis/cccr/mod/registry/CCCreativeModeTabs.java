@@ -1,5 +1,6 @@
 package dev.vuis.cccr.mod.registry;
 
+import dev.vuis.cccr.mod.util.CCRegistryUtil;
 import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;

@@ -4,6 +4,7 @@ import dev.vuis.cccr.mod.data.Ammo;
 import dev.vuis.cccr.mod.item.GunItem;
 import dev.vuis.cccr.mod.item.gun.FireMode;
 import dev.vuis.cccr.mod.item.gun.SpreadValues;
+import dev.vuis.cccr.mod.util.CCRegistryUtil;
 import java.util.function.Function;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -24,7 +25,7 @@ public final class CCItems {
 				.reloadTicks(35)
 				.spread(new SpreadValues(14f, 2.4f, 4f, 6f, 1.5f, 2f, 8f, 100f))
 				.shootAfterSpread(false)
-				.recoil(4.5f)
+				.recoil(5.0f)
 				.soundShoot(() -> CCSoundEvents.ITEM_GUN_DESERT_EAGLE_SHOOT)
 				.soundReload(() -> CCSoundEvents.ITEM_GUN_DESERT_EAGLE_RELOAD)
 		)

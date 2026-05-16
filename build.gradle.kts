@@ -29,6 +29,8 @@ repositories {
 loom {
 	splitEnvironmentSourceSets()
 
+	accessWidenerPath = file("src/main/resources/cccr.classtweaker")
+
 	mods {
 		register("cccr") {
 			sourceSet(sourceSets.main.get())
@@ -52,7 +54,7 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	implementation("net.fabricmc.fabric-api:fabric-api:${providers.gradleProperty("fabric_api_version").get()}")
 
-	compileOnly("com.demonwav.mcdev:annotations:2.1.0");
+	compileOnly("com.demonwav.mcdev:annotations:2.1.0")
 
 //	implementation("maven.modrinth:geckolib:${providers.gradleProperty("geckolib_version").get()}")
 }
