@@ -47,13 +47,15 @@ public record Ammo(int loaded, int reserve) implements TooltipProvider {
 			Component.literal("Loaded: ")
 				.append(
 					Component.literal(Integer.toString(loaded))
-						.withStyle(loaded > 0 ? ChatFormatting.GREEN : ChatFormatting.RED))
+						.withStyle(loaded > 0 ? ChatFormatting.GREEN : ChatFormatting.RED)
+				)
 		);
 		consumer.accept(
 			Component.literal("Reserve: ")
 				.append(
 					Component.literal(Integer.toString(reserve))
-						.withStyle(reserve > 0 ? ChatFormatting.GREEN : ChatFormatting.RED))
+						.withStyle(reserve > 0 ? ChatFormatting.GREEN : ChatFormatting.RED)
+				)
 		);
 	}
 }
