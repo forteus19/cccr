@@ -1,6 +1,7 @@
 {
-  "cccr.command.create.success": "Created match %s",
   "cccr.gun.message.reloading": "(Reloading)",
+  "cccr.team.counterTerrorists": "Counter-Terrorists",
+  "cccr.team.terrorists": "Terrorists",
   "item.cccr.ak_74": "AK-74",
   "item.cccr.desert_eagle": "Desert Eagle",
   "itemGroup.cccr.guns": "CounterCraft Guns",

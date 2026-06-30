@@ -12,29 +12,15 @@ repositories {
 	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
 	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
 	// for more information about repositories.
-
-	exclusiveContent {
-		forRepository {
-			maven {
-				name = "Modrinth"
-				url = uri("https://api.modrinth.com/maven")
-			}
-		}
-		filter {
-			includeGroup("maven.modrinth")
-		}
-	}
 }
 
 loom {
 	splitEnvironmentSourceSets()
 
-	accessWidenerPath = file("src/main/resources/cccr.classtweaker")
-
 	mods {
 		register("cccr") {
-			sourceSet(sourceSets.main.get())
-			sourceSet(sourceSets.getByName("client"))
+			sourceSet(sourceSets["main"])
+			sourceSet(sourceSets["client"])
 		}
 	}
 }
@@ -55,8 +41,6 @@ dependencies {
 	implementation("net.fabricmc.fabric-api:fabric-api:${providers.gradleProperty("fabric_api_version").get()}")
 
 	compileOnly("com.demonwav.mcdev:annotations:2.1.0")
-
-//	implementation("maven.modrinth:geckolib:${providers.gradleProperty("geckolib_version").get()}")
 }
 
 tasks.processResources {

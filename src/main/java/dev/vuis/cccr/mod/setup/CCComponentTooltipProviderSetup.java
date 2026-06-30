@@ -1,4 +1,4 @@
-package dev.vuis.cccr.mod.item.component;
+package dev.vuis.cccr.mod.setup;
 
 import dev.vuis.cccr.mod.registry.CCDataComponents;
 import net.fabricmc.fabric.api.item.v1.ItemComponentTooltipProviderRegistry;

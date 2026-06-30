@@ -1,4 +1,4 @@
-package dev.vuis.cccr.mod.net;
+package dev.vuis.cccr.mod.setup;
 
 import dev.vuis.cccr.mod.net.packet.ServerboundGunReloadPacket;
 import dev.vuis.cccr.mod.net.packet.ServerboundGunShootPacket;

@@ -7,16 +7,18 @@ import java.util.Collections;
 import java.util.List;
 import net.minecraft.network.chat.Component;
 
+@SuppressWarnings("unused")
 public final class CCTexts {
 	private static final List<Base> INSTANCES = new ArrayList<>();
-
-	public static final Dynamic COMMAND_CREATE_SUCCESS = new Dynamic("cccr.command.create.success", "Created match %s", 1);
 
 	public static final Singleton KEY_CATEGORY_CCCR = new Singleton("key.category.cccr.cccr", CounterCraft.DISPLAY_NAME);
 	public static final Singleton KEY_RELOAD = new Singleton("key.cccr.reload", "Reload");
 	public static final Singleton KEY_SWITCH_FIRE_MODE = new Singleton("key.cccr.switchFireMode", "Switch Fire Mode");
 
 	public static final Singleton GUN_MESSAGE_RELOADING = new Singleton("cccr.gun.message.reloading", "(Reloading)");
+
+	public static final Singleton TEAM_COUNTER_TERRORISTS = new Singleton("cccr.team.counterTerrorists", "Counter-Terrorists");
+	public static final Singleton TEAM_TERRORISTS = new Singleton("cccr.team.terrorists", "Terrorists");
 
 	private CCTexts() {
 		throw new AssertionError();

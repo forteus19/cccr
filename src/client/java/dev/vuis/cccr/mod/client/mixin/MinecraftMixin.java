@@ -1,7 +1,7 @@
 package dev.vuis.cccr.mod.client.mixin;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import dev.vuis.cccr.mod.client.event.CCClientEvents;
+import dev.vuis.cccr.mod.client.event.CCClientFrameHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.profiling.ProfilerFiller;
 import org.spongepowered.asm.mixin.Mixin;
@@ -26,6 +26,6 @@ public abstract class MinecraftMixin {
 		@Local(name = "profiler") ProfilerFiller profiler
 	) {
 		profiler.popPush("cccrOnStartRenderFrame");
-		CCClientEvents.onStartRenderFrame((Minecraft) (Object) this);
+		CCClientFrameHandler.onStartRenderFrame((Minecraft) (Object) this);
 	}
 }

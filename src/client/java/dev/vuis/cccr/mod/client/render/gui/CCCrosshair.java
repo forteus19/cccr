@@ -9,7 +9,6 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.entity.EquipmentSlot;
 
 public record CCCrosshair(
 	Identifier middle,
@@ -18,7 +17,6 @@ public record CCCrosshair(
 	Identifier left,
 	Identifier right
 ) {
-	private static final int TEXTURE_SIZE = 16;
 	public static final CCCrosshair DEFAULT = new CCCrosshair(
 		CounterCraft.id("textures/gui/crosshair/middle.png"),
 		CounterCraft.id("textures/gui/crosshair/top.png"),
@@ -27,10 +25,13 @@ public record CCCrosshair(
 		CounterCraft.id("textures/gui/crosshair/right.png")
 	);
 
+	private static final int SIZE = 16;
+	private static final int TEXTURE_SIZE = 32;
+
 	public void extract(GuiGraphicsExtractor graphics, DeltaTracker delta) {
 		Minecraft minecraft = Minecraft.getInstance();
 		LocalPlayer player = minecraft.player;
-		if (player == null || !(player.getItemBySlot(EquipmentSlot.MAINHAND).getItem() instanceof GunItem)) {
+		if (player == null || !(player.getMainHandItem().getItem() instanceof GunItem)) {
 			return;
 		}
 
@@ -38,37 +39,18 @@ public record CCCrosshair(
 		int midY = graphics.guiHeight() / 2;
 		int renderSpread = (int) (GunItemClient.currentSpread(delta.getGameTimeDeltaPartialTick(false)) * 5f);
 
+		blitCrosshairPart(graphics, middle, midX - 16, midY - 16);
+		blitCrosshairPart(graphics, top, midX - 16, midY - (20 + renderSpread));
+		blitCrosshairPart(graphics, bottom, midX - 16, midY - (7 - renderSpread));
+		blitCrosshairPart(graphics, left, midX - (20 + renderSpread), midY - 16);
+		blitCrosshairPart(graphics, right, midX - (7 - renderSpread), midY - 16);
+	}
+
+	private static void blitCrosshairPart(GuiGraphicsExtractor graphics, Identifier texture, int x, int y) {
 		graphics.blit(
-			RenderPipelines.GUI_TEXTURED, middle,
-			midX - 8, midY - 8, 0, 0,
-			TEXTURE_SIZE, TEXTURE_SIZE,
-			TEXTURE_SIZE, TEXTURE_SIZE
-		);
-		graphics.blit(
-			RenderPipelines.GUI_TEXTURED, top,
-			midX - 8, midY - (14 + renderSpread), 0, 0,
-			TEXTURE_SIZE, TEXTURE_SIZE,
-			TEXTURE_SIZE, TEXTURE_SIZE
-		);
-		graphics.blit(
-			RenderPipelines.GUI_TEXTURED, bottom,
-			midX - 8, midY - (2 - renderSpread),
-			0, 0,
-			TEXTURE_SIZE, TEXTURE_SIZE,
-			TEXTURE_SIZE, TEXTURE_SIZE
-		);
-		graphics.blit(
-			RenderPipelines.GUI_TEXTURED, left,
-			midX - (14 + renderSpread), midY - 8,
-			0, 0,
-			TEXTURE_SIZE, TEXTURE_SIZE,
-			TEXTURE_SIZE, TEXTURE_SIZE
-		);
-		graphics.blit(
-			RenderPipelines.GUI_TEXTURED, right,
-			midX - (2 - renderSpread), midY - 8,
-			0, 0,
-			TEXTURE_SIZE, TEXTURE_SIZE,
+			RenderPipelines.GUI_TEXTURED, texture,
+			x, y, 0f, 0f,
+			SIZE, SIZE,
 			TEXTURE_SIZE, TEXTURE_SIZE
 		);
 	}

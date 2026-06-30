@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
+import org.jspecify.annotations.NonNull;
 
 public record Pose(
 	Vec3 position,
@@ -16,4 +17,9 @@ public record Pose(
 		).apply(
 			instance, Pose::new
 		));
+
+	@Override
+	public @NonNull String toString() {
+		return "[(" + position.x + ", " + position.y + ", " + position.z + "), (" + rotation.x + ", " + rotation.y + ")]";
+	}
 }
