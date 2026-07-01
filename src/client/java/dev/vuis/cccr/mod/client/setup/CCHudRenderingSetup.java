@@ -1,6 +1,7 @@
 package dev.vuis.cccr.mod.client.setup;
 
 import dev.vuis.cccr.mod.CounterCraft;
+import dev.vuis.cccr.mod.client.render.gui.CCAmmoDisplay;
 import dev.vuis.cccr.mod.client.render.gui.CCCrosshair;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
@@ -15,6 +16,11 @@ public final class CCHudRenderingSetup {
 			VanillaHudElements.CROSSHAIR,
 			CounterCraft.id("gun_crosshair"),
 			CCCrosshair.DEFAULT::extract
+		);
+		HudElementRegistry.attachElementAfter(
+			VanillaHudElements.HOTBAR,
+			CounterCraft.id("gun_ammo"),
+			CCAmmoDisplay::extract
 		);
 	}
 }

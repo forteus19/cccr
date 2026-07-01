@@ -43,6 +43,14 @@ public final class GunItemClient {
 		throw new AssertionError();
 	}
 
+	public static Data getClientData(GunItem item) {
+		if (item.clientData == null) {
+			item.clientData = new Data();
+		}
+
+		return (Data) item.clientData;
+	}
+
 	public static void tick(
 		@NonNull Minecraft minecraft,
 		@NonNull GunItem item,
@@ -50,11 +58,7 @@ public final class GunItemClient {
 		@NonNull ClientLevel level,
 		@NonNull LocalPlayer player
 	) {
-		Data gunData = (Data) item.clientData.get();
-		if (gunData == null) {
-			gunData = new Data();
-			item.clientData.set(gunData);
-		}
+		Data gunData = getClientData(item);
 
 		boolean shootDownPrev = shootDown;
 		shootDown = minecraft.mouseHandler.isLeftPressed();
@@ -288,8 +292,8 @@ public final class GunItemClient {
 		currentSpread = Math.max(currentSpread - amount, MIN_SPREAD);
 	}
 
-	private static final class Data {
-		private int fireModeIndex = 0;
-		private int shootCooldown = 0;
+	public static final class Data {
+		public int fireModeIndex = 0;
+		public int shootCooldown = 0;
 	}
 }

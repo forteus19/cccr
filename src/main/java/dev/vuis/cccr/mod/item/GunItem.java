@@ -6,7 +6,6 @@ import dev.vuis.cccr.mod.item.gun.SpreadValues;
 import dev.vuis.cccr.mod.registry.CCDataComponents;
 import dev.vuis.cccr.mod.text.CCTexts;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -31,7 +30,7 @@ public class GunItem extends Item {
 	public final @NonNull Supplier<SoundEvent> soundShoot;
 	public final @NonNull Supplier<SoundEvent> soundReload;
 
-	public final @NonNull AtomicReference<Object> clientData = new AtomicReference<>();
+	public @Nullable Object clientData = null;
 
 	public GunItem(Properties properties, Settings gunSettings) {
 		super(gunSettings.setComponentDefaults(properties));

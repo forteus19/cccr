@@ -29,8 +29,7 @@ public record CCCrosshair(
 	private static final int TEXTURE_SIZE = 32;
 
 	public void extract(GuiGraphicsExtractor graphics, DeltaTracker delta) {
-		Minecraft minecraft = Minecraft.getInstance();
-		LocalPlayer player = minecraft.player;
+		LocalPlayer player = Minecraft.getInstance().player;
 		if (player == null || !(player.getMainHandItem().getItem() instanceof GunItem)) {
 			return;
 		}
