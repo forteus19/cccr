@@ -9,6 +9,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
 public record BulletBlockHit(
@@ -20,6 +21,13 @@ public record BulletBlockHit(
 		BlockPos.STREAM_CODEC, BulletBlockHit::blockPos,
 		BulletBlockHit::new
 	);
+
+	public static BulletBlockHit from(BlockHitResult hitResult) {
+		return new BulletBlockHit(
+			hitResult.getLocation(),
+			hitResult.getBlockPos()
+		);
+	}
 
 	public void handle(ServerLevel level, Entity shootingEntity) {
 		BlockState hitState = level.getBlockState(blockPos);

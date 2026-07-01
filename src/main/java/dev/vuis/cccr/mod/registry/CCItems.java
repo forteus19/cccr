@@ -43,7 +43,7 @@ public final class CCItems {
 				.spread(new SpreadValues(1.8f, 1f, 1.8f, 4f, 2.4f, 4.4f, 6.5f, 100f))
 				.shootAfterSpread(false)
 				.recoil(1.8f)
-				.soundShoot(() -> CCSoundEvents.ITEM_GUN_DESERT_EAGLE_SHOOT)
+				.soundShoot(() -> CCSoundEvents.ITEM_GUN_AK_74_SHOOT)
 				.soundReload(() -> CCSoundEvents.ITEM_GUN_DESERT_EAGLE_RELOAD)
 		)
 	);

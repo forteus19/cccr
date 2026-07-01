@@ -1,4 +1,9 @@
 {
+  "item.gun.ak_74.shoot": {
+    "sounds": [
+      "cccr:item/gun/ak_74/shoot"
+    ]
+  },
   "item.gun.desert_eagle.reload": {
     "sounds": [
       "cccr:item/gun/desert_eagle/reload"

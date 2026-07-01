@@ -9,8 +9,6 @@ import dev.vuis.cccr.mod.item.gun.SpreadValues;
 import dev.vuis.cccr.mod.net.packet.ServerboundGunReloadPacket;
 import dev.vuis.cccr.mod.net.packet.ServerboundGunShootPacket;
 import dev.vuis.cccr.mod.registry.CCSoundEvents;
-import it.unimi.dsi.fastutil.Pair;
-import it.unimi.dsi.fastutil.ints.IntFloatPair;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -207,7 +205,7 @@ public final class GunItemClient {
 			addSpread(spreadIncreaseFired);
 		}
 
-        var hits = BulletCollision.bullet(
+        BulletCollision.Result collision = BulletCollision.bullet(
             level,
             new ClipContext(
                 collisionFrom, collisionTo,
@@ -217,13 +215,9 @@ public final class GunItemClient {
             item.damage
         );
 
-		ClientPlayNetworking.send(new ServerboundGunShootPacket(
-            collisionFrom, collisionTo,
-            // block hits
-            hits.left().stream().map(hit -> Pair.of(hit.getLocation(), hit.getBlockPos())).toList(),
-            // entity hits
-            hits.right().stream().map(hit -> IntFloatPair.of(hit.left().getEntity().getId(), Mth.ceil(hit.rightFloat()))).toList()
-        ));
+		ClientPlayNetworking.send(
+			new ServerboundGunShootPacket(collisionFrom, collisionTo, collision)
+		);
 
 		applyRecoil(level.getRandom(), item.recoil);
 

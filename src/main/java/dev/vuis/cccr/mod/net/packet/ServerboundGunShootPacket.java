@@ -4,11 +4,10 @@ import dev.vuis.cccr.mod.CounterCraft;
 import dev.vuis.cccr.mod.data.Ammo;
 import dev.vuis.cccr.mod.item.GunItem;
 import dev.vuis.cccr.mod.item.gun.BulletBlockHit;
+import dev.vuis.cccr.mod.item.gun.BulletCollision;
 import dev.vuis.cccr.mod.item.gun.BulletEntityHit;
 import io.netty.buffer.ByteBuf;
-import java.util.List;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.server.level.ServerLevel;
@@ -20,16 +19,14 @@ import org.jspecify.annotations.NonNull;
 public record ServerboundGunShootPacket(
 	Vec3 from,
 	Vec3 to,
-	List<BulletBlockHit> blockHits,
-	List<BulletEntityHit> entityHits
+	BulletCollision.Result collisionResult
 ) implements CustomPacketPayload {
 	public static final Type<ServerboundGunShootPacket> TYPE = new Type<>(CounterCraft.id("gun_shoot"));
 
 	public static final StreamCodec<ByteBuf, ServerboundGunShootPacket> STREAM_CODEC = StreamCodec.composite(
 		Vec3.STREAM_CODEC, ServerboundGunShootPacket::from,
 		Vec3.STREAM_CODEC, ServerboundGunShootPacket::to,
-		BulletBlockHit.STREAM_CODEC.apply(ByteBufCodecs.list()), ServerboundGunShootPacket::blockHits,
-		BulletEntityHit.STREAM_CODEC.apply(ByteBufCodecs.list()), ServerboundGunShootPacket::entityHits,
+		BulletCollision.Result.STREAM_CODEC, ServerboundGunShootPacket::collisionResult,
 		ServerboundGunShootPacket::new
 	);
 
@@ -57,11 +54,11 @@ public record ServerboundGunShootPacket(
 		}
 		GunItem.setAmmo(heldStack, ammo.withLoaded(ammo.loaded() - 1));
 
-		for (BulletBlockHit blockHit : blockHits) {
+		for (BulletBlockHit blockHit : collisionResult.blockHits()) {
 			blockHit.handle(level, player);
 		}
 
-		for (BulletEntityHit entityHit : entityHits) {
+		for (BulletEntityHit entityHit : collisionResult.entityHits()) {
 			entityHit.handle(level, player);
 		}
 	}

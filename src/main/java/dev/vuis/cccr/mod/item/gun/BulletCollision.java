@@ -1,7 +1,6 @@
 package dev.vuis.cccr.mod.item.gun;
 
-import it.unimi.dsi.fastutil.Pair;
-import it.unimi.dsi.fastutil.objects.ObjectFloatPair;
+import io.netty.buffer.ByteBuf;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -10,6 +9,8 @@ import java.util.Map;
 import java.util.Optional;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.level.BlockGetter;
@@ -28,7 +29,7 @@ public final class BulletCollision {
 		throw new AssertionError();
 	}
 
-	public static Pair<List<BlockHitResult>, List<ObjectFloatPair<EntityHitResult>>> bullet(Level level, ClipContext clipContext, float initialDamage) {
+	public static Result bullet(Level level, ClipContext clipContext, float initialDamage) {
 		Vec3 from = clipContext.getFrom();
 		Vec3 to = clipContext.getTo();
 
@@ -71,10 +72,10 @@ public final class BulletCollision {
 			BulletCollision::getBlockMiss
 		);
 
-		List<EntityHitResult> entityHits = getEntityCollisions(level, clipContext.getFrom(), lastBlockHit.getLocation());
+		List<EntityHitResult> entityHits = getEntityCollisions(level, from, lastBlockHit.getLocation());
 
 		if (blockHits.isEmpty() && entityHits.isEmpty()) {
-			return Pair.of(List.of(), List.of());
+			return Result.EMPTY;
 		}
 
 		List<HitResult> combinedHits = new ArrayList<>(blockHits.size() + entityHits.size());
@@ -82,34 +83,34 @@ public final class BulletCollision {
 		combinedHits.addAll(entityHits);
 		combinedHits.sort(comparingHitResultDistance(from));
 
-		List<BlockHitResult> finalBlockHits = new ArrayList<>();
-		List<ObjectFloatPair<EntityHitResult>> finalEntityHits = new ArrayList<>();
+		List<BulletBlockHit> blockHitResults = new ArrayList<>();
+		List<BulletEntityHit> entityHitResults = new ArrayList<>();
 		float damage = initialDamage;
 
 		hitLoop:
 		for (HitResult hit : combinedHits) {
 			switch (hit) {
 				case BlockHitResult blockHit -> {
-					finalBlockHits.add(blockHit);
+					blockHitResults.add(BulletBlockHit.from(blockHit));
 
 					BlockState state = blockStateCache.get(blockHit.getBlockPos());
 					if (state == null) {
 						break hitLoop;
 					}
 
-					damage -= damage * WallbangValues.get(state);
+					damage -= initialDamage * WallbangValues.get(state);
 					if (damage <= 0.0) {
 						break hitLoop;
 					}
 				}
 				case EntityHitResult entityHit -> {
-					finalEntityHits.add(ObjectFloatPair.of(entityHit, damage));
+					entityHitResults.add(BulletEntityHit.from(entityHit, damage));
 				}
 				default -> throw new AssertionError();
 			}
 		}
 
-		return Pair.of(finalBlockHits, finalEntityHits);
+		return new Result(blockHitResults, entityHitResults);
 	}
 
 	private static BlockHitResult getBlockMiss(ClipContext clipContext) {
@@ -147,5 +148,18 @@ public final class BulletCollision {
 
 	private static <T extends HitResult> Comparator<T> comparingHitResultDistance(Vec3 origin) {
 		return Comparator.comparingDouble(hit -> hit.getLocation().distanceToSqr(origin));
+	}
+
+	public record Result(
+		List<BulletBlockHit> blockHits,
+		List<BulletEntityHit> entityHits
+	) {
+		public static final Result EMPTY = new Result(List.of(), List.of());
+
+		public static final StreamCodec<ByteBuf, Result> STREAM_CODEC = StreamCodec.composite(
+			BulletBlockHit.STREAM_CODEC.apply(ByteBufCodecs.list()), Result::blockHits,
+			BulletEntityHit.STREAM_CODEC.apply(ByteBufCodecs.list()), Result::entityHits,
+			Result::new
+		);
 	}
 }

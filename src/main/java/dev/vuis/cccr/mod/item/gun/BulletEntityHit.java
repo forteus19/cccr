@@ -7,6 +7,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.EntityHitResult;
 
 public record BulletEntityHit(
 	int entityId,
@@ -17,6 +18,13 @@ public record BulletEntityHit(
 		ByteBufCodecs.FLOAT, BulletEntityHit::damage,
 		BulletEntityHit::new
 	);
+
+	public static BulletEntityHit from(EntityHitResult hitResult, float damage) {
+		return new BulletEntityHit(
+			hitResult.getEntity().getId(),
+			damage
+		);
+	}
 
 	public void handle(ServerLevel level, Player shootingPlayer) {
 		Entity entity = level.getEntity(entityId);
