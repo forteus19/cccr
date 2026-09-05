@@ -18,10 +18,13 @@ import org.jspecify.annotations.NonNull;
 public record Ammo(int loaded, int reserve) implements TooltipProvider {
 	public static final Ammo EMPTY = new Ammo(0, 0);
 
-	public static final Codec<Ammo> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-		ExtraCodecs.NON_NEGATIVE_INT.fieldOf("loaded").forGetter(Ammo::loaded),
-		ExtraCodecs.NON_NEGATIVE_INT.fieldOf("reserve").forGetter(Ammo::reserve)
-	).apply(builder, Ammo::new));
+	public static final Codec<Ammo> CODEC = RecordCodecBuilder.create(instance ->
+		instance.group(
+			ExtraCodecs.NON_NEGATIVE_INT.fieldOf("loaded").forGetter(Ammo::loaded),
+			ExtraCodecs.NON_NEGATIVE_INT.fieldOf("reserve").forGetter(Ammo::reserve)
+		).apply(
+			instance, Ammo::new
+		));
 	public static final StreamCodec<ByteBuf, Ammo> STREAM_CODEC = StreamCodec.composite(
 		ByteBufCodecs.VAR_INT, Ammo::loaded,
 		ByteBufCodecs.VAR_INT, Ammo::reserve,

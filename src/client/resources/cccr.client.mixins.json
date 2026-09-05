@@ -3,7 +3,7 @@
   "package": "dev.vuis.cccr.mod.client.mixin",
   "compatibilityLevel": "JAVA_25",
   "client": [
-    "GuiMixin",
+    "HudMixin",
     "MinecraftMixin"
   ],
   "injectors": {

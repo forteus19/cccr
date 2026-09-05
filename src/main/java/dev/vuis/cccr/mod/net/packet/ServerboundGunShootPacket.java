@@ -40,7 +40,7 @@ public record ServerboundGunShootPacket(
 		ServerLevel level = player.level();
 
 		ItemStack heldStack = player.getMainHandItem();
-		if (!(heldStack.getItem() instanceof GunItem gunItem)) {
+		if (!(heldStack.getItem() instanceof GunItem)) {
 			return;
 		}
 

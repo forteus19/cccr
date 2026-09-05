@@ -23,6 +23,12 @@ loom {
 			sourceSet(sourceSets["client"])
 		}
 	}
+
+	runs {
+		getByName("client") {
+			programArguments.addAll("--username", "Dev")
+		}
+	}
 }
 
 fabricApi {
