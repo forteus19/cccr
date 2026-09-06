@@ -25,8 +25,7 @@ public record CCCrosshair(
 		CounterCraft.id("textures/gui/crosshair/right.png")
 	);
 
-	private static final int SIZE = 16;
-	private static final int TEXTURE_SIZE = 32;
+	private static final int PART_SIZE = 16;
 
 	public void extract(GuiGraphicsExtractor graphics, DeltaTracker delta) {
 		LocalPlayer player = Minecraft.getInstance().player;
@@ -37,20 +36,43 @@ public record CCCrosshair(
 		int midX = graphics.guiWidth() / 2;
 		int midY = graphics.guiHeight() / 2;
 		int renderSpread = (int) (GunItemClient.currentSpread(delta.getGameTimeDeltaPartialTick(false)) * 5f);
+		int centerOffset = 6;
 
-		blitCrosshairPart(graphics, middle, midX - 16, midY - 16);
-		blitCrosshairPart(graphics, top, midX - 16, midY - (20 + renderSpread));
-		blitCrosshairPart(graphics, bottom, midX - 16, midY - (7 - renderSpread));
-		blitCrosshairPart(graphics, left, midX - (20 + renderSpread), midY - 16);
-		blitCrosshairPart(graphics, right, midX - (7 - renderSpread), midY - 16);
+		blitCrosshairPart(
+			graphics, middle,
+			midX,
+			midY
+		);
+		blitCrosshairPart(
+			graphics, top,
+			midX,
+			midY - renderSpread - centerOffset
+		);
+		blitCrosshairPart(
+			graphics, bottom,
+			midX,
+			midY + renderSpread + centerOffset
+		);
+		blitCrosshairPart(
+			graphics, left,
+			midX - renderSpread - centerOffset,
+			midY
+		);
+		blitCrosshairPart(
+			graphics, right,
+			midX + renderSpread + centerOffset,
+			midY
+		);
 	}
 
 	private static void blitCrosshairPart(GuiGraphicsExtractor graphics, Identifier texture, int x, int y) {
 		graphics.blit(
-			RenderPipelines.GUI_TEXTURED, texture,
-			x, y, 0f, 0f,
-			SIZE, SIZE,
-			TEXTURE_SIZE, TEXTURE_SIZE
+			RenderPipelines.GUI_TEXTURED,
+			texture,
+			x - PART_SIZE / 2, y - PART_SIZE / 2,
+			0f, 0f,
+			PART_SIZE, PART_SIZE,
+			PART_SIZE, PART_SIZE
 		);
 	}
 }

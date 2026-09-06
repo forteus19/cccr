@@ -22,12 +22,12 @@ public final class WallbangValues {
 	}
 
 	public static float get(BlockState state) {
-		float reduction = SOUND_TYPES.getFloat(state.getSoundType());
+		float reduction = BLOCKS.getFloat(state.getSoundType());
 		if (!Float.isNaN(reduction)) {
 			return reduction;
 		}
 
-		reduction = BLOCKS.getFloat(state.getBlock());
+		reduction = SOUND_TYPES.getFloat(state.getBlock());
 		if (!Float.isNaN(reduction)) {
 			return reduction;
 		} else {
