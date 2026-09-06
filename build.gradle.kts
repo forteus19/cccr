@@ -1,6 +1,7 @@
 plugins {
 	id("net.fabricmc.fabric-loom")
-	`maven-publish`
+	id("io.freefair.lombok") version "9.5.0"
+	id("maven-publish")
 }
 
 version = providers.gradleProperty("mod_version").get()
@@ -12,6 +13,18 @@ repositories {
 	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
 	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
 	// for more information about repositories.
+
+	exclusiveContent {
+		forRepository {
+			maven {
+				name = "GeckoLib"
+				url = uri("https://dl.cloudsmith.io/public/geckolib3/geckolib/maven")
+			}
+		}
+		filter {
+			includeGroupAndSubgroups("com.geckolib")
+		}
+	}
 }
 
 loom {
@@ -38,13 +51,17 @@ fabricApi {
 }
 
 dependencies {
+	val minecraftVersion = providers.gradleProperty("minecraft_version").get()
+
 	// To change the versions see the gradle.properties file
-	minecraft("com.mojang:minecraft:${providers.gradleProperty("minecraft_version").get()}")
+	minecraft("com.mojang:minecraft:$minecraftVersion")
 	
 	implementation("net.fabricmc:fabric-loader:${providers.gradleProperty("loader_version").get()}")
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	implementation("net.fabricmc.fabric-api:fabric-api:${providers.gradleProperty("fabric_api_version").get()}")
+
+	implementation("com.geckolib:geckolib-fabric-$minecraftVersion:${providers.gradleProperty("geckolib_version").get()}")
 
 	compileOnly("com.demonwav.mcdev:annotations:2.1.0")
 }

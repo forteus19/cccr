@@ -67,7 +67,7 @@ public final class CCAmmoDisplay {
 				0xFFFFFFFF, true
 			);
 
-			String fireModeName = gunItem.fireModes[clientData.fireModeIndex].toString();
+			String fireModeName = gunItem.settings.fireModes().get(clientData.fireModeIndex).toString();
 
 			graphics.text(
 				font,

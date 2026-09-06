@@ -95,11 +95,11 @@ public final class GunItemClient {
 
 		if (ammo.loaded() > 0) {
 			if (gunData.shootCooldown == 0 && !isReloading) {
-				FireMode fireMode = item.fireModes[gunData.fireModeIndex];
+				FireMode fireMode = item.settings.fireModes().get(gunData.fireModeIndex);
 
 				if (shootDown && (fireMode == FireMode.AUTO || !shootDownPrev)) {
 					shoot(level, player, item);
-					gunData.shootCooldown = item.shootDelay;
+					gunData.shootCooldown = item.settings.shootDelay();
 				}
 			}
 		} else if (shootDown && !shootDownPrev && !isReloading) {
@@ -122,7 +122,7 @@ public final class GunItemClient {
 		@NonNull LocalPlayer player,
 		@NonNull GunItem item
 	) {
-		SpreadValues spread = item.spread;
+		SpreadValues spread = item.settings.spread();
 
 		Vec3 velocity = player.getDeltaMovement();
 
@@ -179,7 +179,7 @@ public final class GunItemClient {
 		@NonNull GunItem item,
 		@NonNull Data gunData
 	) {
-		gunData.fireModeIndex = (gunData.fireModeIndex + 1) % item.fireModes.length;
+		gunData.fireModeIndex = (gunData.fireModeIndex + 1) % item.settings.fireModes().size();
 
 		level.playSound(
 			player,
@@ -194,9 +194,10 @@ public final class GunItemClient {
 		@NonNull LocalPlayer player,
 		@NonNull GunItem item
 	) {
-		float spreadIncreaseFired = item.spread.increaseFired();
+		boolean shootAfterSpread = item.settings.shootAfterSpread();
+		float spreadIncreaseFired = item.settings.spread().increaseFired();
 
-		if (item.shootAfterSpread) {
+		if (shootAfterSpread) {
 			addSpread(spreadIncreaseFired);
 		}
 
@@ -205,7 +206,7 @@ public final class GunItemClient {
 			applySpread(level.getRandom(), player.getXRot(), player.getYRot()).scale(64.0)
 		);
 
-		if (!item.shootAfterSpread) {
+		if (!shootAfterSpread) {
 			addSpread(spreadIncreaseFired);
 		}
 
@@ -216,19 +217,19 @@ public final class GunItemClient {
                 ClipContext.Block.COLLIDER, ClipContext.Fluid.ANY,
                 CollisionContext.of(player)
             ),
-            item.damage
+            item.settings.damage()
         );
 
 		ClientPlayNetworking.send(
 			new ServerboundGunShootPacket(collisionFrom, collisionTo, collision)
 		);
 
-		applyRecoil(level.getRandom(), item.recoil);
+		applyRecoil(level.getRandom(), item.settings.recoil());
 
 		level.playSound(
 			player,
 			player.getX(), player.getY(), player.getZ(),
-			item.soundShoot.get(), SoundSource.PLAYERS,
+			item.sounds.shoot().get(), SoundSource.PLAYERS,
 			1f, 1f
 		);
 	}

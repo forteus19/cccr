@@ -1,6 +1,9 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "cccr:item/ak_74"
+    "type": "minecraft:special",
+    "base": "cccr:item/ak_74",
+    "model": {
+      "type": "geckolib:geckolib"
+    }
   }
 }

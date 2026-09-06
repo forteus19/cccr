@@ -18,7 +18,6 @@ public final class CCDataComponents {
 		"reload_ticks", DataComponentType.<Integer>builder()
 			.persistent(ExtraCodecs.NON_NEGATIVE_INT)
 			.networkSynchronized(ByteBufCodecs.VAR_INT)
-			.ignoreSwapAnimation()
 	);
 
 	private CCDataComponents() {
@@ -26,7 +25,7 @@ public final class CCDataComponents {
 	}
 
 	private static <T> DataComponentType<T> register(String id, DataComponentType.Builder<T> builder) {
-		return Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, CounterCraft.id(id), builder.build());
+		return Registry.register(BuiltInRegistries.DATA_COMPONENT_TYPE, CounterCraft.id(id), builder.ignoreSwapAnimation().build());
 	}
 
 	public static void init() {

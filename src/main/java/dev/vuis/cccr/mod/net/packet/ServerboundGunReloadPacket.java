@@ -42,22 +42,24 @@ public final class ServerboundGunReloadPacket implements CustomPacketPayload {
 			return;
 		}
 
+		GunItem.Settings settings = gunItem.settings;
+
 		Ammo ammo = GunItem.getAmmo(heldStack);
-		if (ammo.loaded() >= gunItem.maxAmmo.loaded() || ammo.reserve() == 0) {
+		if (ammo.loaded() >= settings.maxAmmo().loaded() || ammo.reserve() == 0) {
 			return;
 		}
 
-		GunItem.setReloadTicks(heldStack, gunItem.maxReloadTicks);
+		GunItem.setReloadTicks(heldStack, gunItem.settings.reloadTicks());
 
-		int usedAmmo = gunItem.maxAmmo.loaded() - ammo.loaded();
+		int usedAmmo = settings.maxAmmo().loaded() - ammo.loaded();
 		GunItem.setAmmo(heldStack, new Ammo(
-			Math.min(ammo.loaded() + ammo.reserve(), gunItem.maxAmmo.loaded()),
+			Math.min(ammo.loaded() + ammo.reserve(), settings.maxAmmo().loaded()),
 			Math.max(ammo.reserve() - usedAmmo, 0)
 		));
 
 		level.playSound(
 			null, player,
-			gunItem.soundReload.get(),
+			gunItem.sounds.reload().get(),
 			SoundSource.PLAYERS,
 			1f, 1f
 		);

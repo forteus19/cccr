@@ -1,6 +1,9 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "cccr:item/desert_eagle"
+    "type": "minecraft:special",
+    "base": "cccr:item/desert_eagle",
+    "model": {
+      "type": "geckolib:geckolib"
+    }
   }
 }

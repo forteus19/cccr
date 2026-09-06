@@ -1,12 +1,18 @@
 package dev.vuis.cccr.mod.item;
 
+import com.geckolib.animatable.GeoItem;
+import com.geckolib.animatable.instance.AnimatableInstanceCache;
+import com.geckolib.animatable.manager.AnimatableManager;
+import com.geckolib.util.GeckoLibUtil;
 import dev.vuis.cccr.mod.data.Ammo;
 import dev.vuis.cccr.mod.item.gun.FireMode;
 import dev.vuis.cccr.mod.item.gun.SpreadValues;
 import dev.vuis.cccr.mod.registry.CCDataComponents;
 import dev.vuis.cccr.mod.text.CCTexts;
-import java.util.Objects;
+import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
+import lombok.Builder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -14,38 +20,23 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import org.apache.commons.lang3.mutable.MutableObject;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
-public class GunItem extends Item {
-	public final float damage;
-	public final @NonNull FireMode[] fireModes;
-	public final int shootDelay;
-	public final @NonNull Ammo maxAmmo;
-	public final int maxReloadTicks;
-	public final @NonNull SpreadValues spread;
-	public final boolean shootAfterSpread;
-	public final float recoil;
-
-	public final @NonNull Supplier<SoundEvent> soundShoot;
-	public final @NonNull Supplier<SoundEvent> soundReload;
+public class GunItem extends CCGeoItem implements GeoItem {
+	public final Settings settings;
+	public final Sounds sounds;
 
 	public @Nullable Object clientData = null;
 
-	public GunItem(Properties properties, Settings gunSettings) {
-		super(gunSettings.setComponentDefaults(properties));
+	private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+	public final MutableObject<Object> geoRenderProvider = new MutableObject<>();
 
-		this.damage = Objects.requireNonNull(gunSettings.damage, "damage");
-		this.fireModes = Objects.requireNonNull(gunSettings.fireModes, "fireModes");
-		this.shootDelay = Objects.requireNonNull(gunSettings.shootDelay, "shootDelay");
-		this.maxAmmo = Objects.requireNonNull(gunSettings.maxAmmo, "maxAmmo");
-		this.maxReloadTicks = Objects.requireNonNull(gunSettings.reloadTicks, "reloadTicks");
-		this.spread = Objects.requireNonNull(gunSettings.spread, "spread");
-		this.shootAfterSpread = Objects.requireNonNull(gunSettings.shootAfterSpread, "shootAfterSpread");
-		this.recoil = Objects.requireNonNull(gunSettings.recoil, "recoil");
-
-		this.soundShoot = Objects.requireNonNull(gunSettings.soundShoot, "soundShoot");
-		this.soundReload = Objects.requireNonNull(gunSettings.soundReload, "soundReload");
+	public GunItem(Properties properties, Settings settings, Sounds sounds) {
+		super(settings.setComponentDefaults(properties));
+		this.settings = settings;
+		this.sounds = sounds;
 	}
 
 	public static Ammo getAmmo(ItemStack stack) {
@@ -89,71 +80,46 @@ public class GunItem extends Item {
 		return name;
 	}
 
-	public static final class Settings {
-		private Float damage;
-		private FireMode[] fireModes;
-		private Integer shootDelay;
-		private Ammo maxAmmo;
-		private Integer reloadTicks;
-		private SpreadValues spread;
-		private Boolean shootAfterSpread;
-		private Float recoil;
+	@Override
+	public void registerControllers(AnimatableManager.@NonNull ControllerRegistrar controllers) {
+	}
 
-		private Supplier<SoundEvent> soundShoot;
-		private Supplier<SoundEvent> soundReload;
+	@Override
+	public @NonNull AnimatableInstanceCache getAnimatableInstanceCache() {
+		return geoCache;
+	}
 
-		public Settings damage(float damage) {
-			this.damage = damage;
-			return this;
-		}
+	@SuppressWarnings("unchecked")
+	@Override
+	public void createGeoRenderer(@NonNull Consumer consumer) {
+		consumer.accept(geoRenderProvider.get());
+	}
 
-		public Settings fireModes(FireMode... fireModes) {
-			this.fireModes = fireModes;
-			return this;
-		}
+	@Override
+	public boolean isPerspectiveAware() {
+		return true;
+	}
 
-		public Settings shootDelay(int shootDelay) {
-			this.shootDelay = shootDelay;
-			return this;
-		}
-
-		public Settings maxAmmo(Ammo maxAmmo) {
-			this.maxAmmo = maxAmmo;
-			return this;
-		}
-
-		public Settings reloadTicks(int reloadTicks) {
-			this.reloadTicks = reloadTicks;
-			return this;
-		}
-
-		public Settings spread(SpreadValues spread) {
-			this.spread = spread;
-			return this;
-		}
-
-		public Settings shootAfterSpread(boolean shootAfterSpread) {
-			this.shootAfterSpread = shootAfterSpread;
-			return this;
-		}
-
-		public Settings recoil(float recoil) {
-			this.recoil = recoil;
-			return this;
-		}
-
-		public Settings soundShoot(Supplier<SoundEvent> soundShoot) {
-			this.soundShoot = soundShoot;
-			return this;
-		}
-
-		public Settings soundReload(Supplier<SoundEvent> soundReload) {
-			this.soundReload = soundReload;
-			return this;
-		}
-
+	@Builder
+	public record Settings(
+		float damage,
+		List<FireMode> fireModes,
+		int shootDelay,
+		Ammo maxAmmo,
+		int reloadTicks,
+		SpreadValues spread,
+		boolean shootAfterSpread,
+		float recoil
+	) {
 		public Item.Properties setComponentDefaults(Item.Properties properties) {
 			return properties.component(CCDataComponents.AMMO, maxAmmo);
 		}
+	}
+
+	@Builder
+	public record Sounds(
+		Supplier<SoundEvent> shoot,
+		Supplier<SoundEvent> reload
+	) {
 	}
 }
