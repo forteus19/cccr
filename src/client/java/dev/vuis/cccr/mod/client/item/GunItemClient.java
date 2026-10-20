@@ -1,6 +1,7 @@
 package dev.vuis.cccr.mod.client.item;
 
 import dev.vuis.cccr.mod.client.registry.CCKeyMappings;
+import dev.vuis.cccr.mod.client.util.ClientGeoUtil;
 import dev.vuis.cccr.mod.data.Ammo;
 import dev.vuis.cccr.mod.item.GunItem;
 import dev.vuis.cccr.mod.item.gun.BulletCollision;
@@ -25,6 +26,8 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import org.jspecify.annotations.NonNull;
 
 public final class GunItemClient {
+	public static final String CONTROLLER_NAME = "gun_controller";
+
 	private static boolean shootDown = false;
 	private static boolean reloadDown = false;
 	private static boolean switchFireModeDown = false;
@@ -44,11 +47,11 @@ public final class GunItemClient {
 	}
 
 	public static Data getClientData(GunItem item) {
-		if (item.clientData == null) {
-			item.clientData = new Data();
+		Object rawData = item.clientData.get();
+		if (rawData == null) {
+			item.clientData.setValue(rawData = new Data());
 		}
-
-		return (Data) item.clientData;
+		return (Data) rawData;
 	}
 
 	public static void tick(
@@ -98,7 +101,7 @@ public final class GunItemClient {
 				FireMode fireMode = item.settings.fireModes().get(gunData.fireModeIndex);
 
 				if (shootDown && (fireMode == FireMode.AUTO || !shootDownPrev)) {
-					shoot(level, player, item);
+					shoot(level, player, item, stack);
 					gunData.shootCooldown = item.settings.shootDelay();
 				}
 			}
@@ -192,7 +195,8 @@ public final class GunItemClient {
 	private static void shoot(
 		@NonNull ClientLevel level,
 		@NonNull LocalPlayer player,
-		@NonNull GunItem item
+		@NonNull GunItem item,
+		@NonNull ItemStack stack
 	) {
 		boolean shootAfterSpread = item.settings.shootAfterSpread();
 		float spreadIncreaseFired = item.settings.spread().increaseFired();
@@ -225,6 +229,8 @@ public final class GunItemClient {
 		);
 
 		applyRecoil(level.getRandom(), item.settings.recoil());
+
+		ClientGeoUtil.triggerAnim(item, stack, CONTROLLER_NAME, "shoot");
 
 		level.playSound(
 			player,

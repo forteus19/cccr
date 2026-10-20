@@ -4,6 +4,7 @@ import com.geckolib.animatable.GeoItem;
 import com.geckolib.animatable.instance.AnimatableInstanceCache;
 import com.geckolib.animatable.manager.AnimatableManager;
 import com.geckolib.util.GeckoLibUtil;
+import dev.vuis.cccr.mod.CounterCraft;
 import dev.vuis.cccr.mod.data.Ammo;
 import dev.vuis.cccr.mod.item.gun.FireMode;
 import dev.vuis.cccr.mod.item.gun.SpreadValues;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import lombok.Builder;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
@@ -28,15 +30,18 @@ public class GunItem extends CCGeoItem implements GeoItem {
 	public final Settings settings;
 	public final Sounds sounds;
 
-	public @Nullable Object clientData = null;
+	public final MutableObject<Object> clientData = new MutableObject<>();
 
 	private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+	public final MutableObject<Consumer<AnimatableManager.ControllerRegistrar>> geoRegistrarHandler = new MutableObject<>();
 	public final MutableObject<Object> geoRenderProvider = new MutableObject<>();
 
 	public GunItem(Properties properties, Settings settings, Sounds sounds) {
 		super(settings.setComponentDefaults(properties));
 		this.settings = settings;
 		this.sounds = sounds;
+
+		GeoItem.registerSyncedAnimatable(this);
 	}
 
 	public static Ammo getAmmo(ItemStack stack) {
@@ -67,6 +72,8 @@ public class GunItem extends CCGeoItem implements GeoItem {
 		if (reloadTicks > 0) {
 			setReloadTicks(stack, reloadTicks - 1);
 		}
+
+		GeoItem.getOrAssignId(stack, level);
 	}
 
 	@Override
@@ -82,6 +89,12 @@ public class GunItem extends CCGeoItem implements GeoItem {
 
 	@Override
 	public void registerControllers(AnimatableManager.@NonNull ControllerRegistrar controllers) {
+		Consumer<AnimatableManager.ControllerRegistrar> registrarHandler = geoRegistrarHandler.get();
+		if (registrarHandler != null) {
+			registrarHandler.accept(controllers);
+		} else {
+			CounterCraft.LOGGER.error("No registrar handler for gun {}", BuiltInRegistries.ITEM.getKey(this));
+		}
 	}
 
 	@Override

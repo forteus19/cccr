@@ -2,7 +2,7 @@ package dev.vuis.cccr.mod.client;
 
 import dev.vuis.cccr.mod.CounterCraft;
 import dev.vuis.cccr.mod.client.registry.CCKeyMappings;
-import dev.vuis.cccr.mod.client.setup.CCGeoRenderSetup;
+import dev.vuis.cccr.mod.client.setup.CCGeoClientSetup;
 import dev.vuis.cccr.mod.client.setup.CCHudRenderingSetup;
 import dev.vuis.cccr.mod.client.setup.CCClientEventSetup;
 import net.fabricmc.api.ClientModInitializer;
@@ -21,7 +21,7 @@ public final class CounterCraftClient implements ClientModInitializer {
 		CounterCraft.LOGGER.info("Registering HUD renderers");
 		CCHudRenderingSetup.register();
 
-		CounterCraft.LOGGER.info("Registering geo renderers");
-		CCGeoRenderSetup.register();
+		CounterCraft.LOGGER.info("Doing client geo setup");
+		CCGeoClientSetup.register();
 	}
 }
